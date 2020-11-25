@@ -5,7 +5,7 @@ using System.Reflection;
 
 #nullable enable
 
-namespace H.Modules.Tests.Utilities
+namespace H.Modules.UnitTests.Utilities
 {
     public static class ResourcesUtilities
     {

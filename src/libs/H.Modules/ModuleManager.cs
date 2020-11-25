@@ -100,7 +100,7 @@ namespace H.Modules
                 initializeAction?.Invoke(container);
 
                 //container.MethodsCancellationToken = cancellationTokenSource.Token,
-                container.ExceptionOccurred += (sender, exception) =>
+                container.ExceptionOccurred += (_, exception) =>
                 {
                     OnExceptionOccurred(exception);
                 };

@@ -5,11 +5,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using H.Containers;
-using H.Modules.Tests.Utilities;
 using H.Core;
+using H.Modules.UnitTests.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace H.Modules.Tests
+namespace H.Modules.UnitTests
 {
     [TestClass]
     [Ignore]
@@ -47,7 +47,7 @@ namespace H.Modules.Tests
                 });
         }
 
-        public async Task BaseModuleTest(
+        public static async Task BaseModuleTest(
             string name, 
             string typeName, 
             string shortName,
@@ -56,9 +56,9 @@ namespace H.Modules.Tests
             var receivedException = (Exception?)null;
             using var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(15));
 
-            using var manager = new ModuleManager<IModule>(
+            await using var manager = new ModuleManager<IModule>(
                 Path.Combine(Path.GetTempPath(), $"H.Containers.Tests_{name}"));
-            manager.ExceptionOccurred += (sender, exception) =>
+            manager.ExceptionOccurred += (_, exception) =>
             {
                 Console.WriteLine($"ExceptionOccurred: {exception}");
                 receivedException = exception;
