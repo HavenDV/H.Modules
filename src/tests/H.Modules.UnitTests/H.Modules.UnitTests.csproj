@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net5.0</TargetFrameworks>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <None Remove="TestFiles\H.NET.Core.dll" />
+    <None Remove="TestFiles\H.Notifiers.RssNotifier.zip" />
+    <None Remove="TestFiles\WitAiConverter.zip" />
+    <None Remove="TestFiles\YandexConverter.zip" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Include="TestFiles\H.NET.Core.dll" />
+    <EmbeddedResource Include="TestFiles\H.Notifiers.RssNotifier.zip" />
+    <EmbeddedResource Include="TestFiles\WitAiConverter.zip" />
+    <EmbeddedResource Include="TestFiles\проверка_проверка_8000.wav" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="H.Containers.Process" Version="0.3.12" />
+    <PackageReference Include="H.Core" Version="0.9.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\libs\H.Modules\H.Modules.csproj" />
+  </ItemGroup>
+
+
+</Project>
