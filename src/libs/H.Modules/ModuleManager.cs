@@ -13,7 +13,7 @@ namespace H.Modules
     /// 
     /// </summary>
     /// <typeparam name="TModule"></typeparam>
-    public class ModuleManager<TModule> : IDisposable 
+    public class ModuleManager<TModule> : IAsyncDisposable 
         where TModule : class
     {
         #region Properties
@@ -105,8 +105,8 @@ namespace H.Modules
                     OnExceptionOccurred(exception);
                 };
 
-                await container.InitializeAsync(cancellationToken);
-                await container.StartAsync(cancellationToken);
+                await container.InitializeAsync(cancellationToken).ConfigureAwait(false);
+                await container.StartAsync(cancellationToken).ConfigureAwait(false);
 
                 if (Directory.Exists(Folder))
                 {
@@ -118,9 +118,9 @@ namespace H.Modules
 
                 ZipFile.ExtractToDirectory(path, Folder);
 
-                await container.LoadAssemblyAsync(Path.Combine(Folder, $"{name}.dll"), cancellationToken);
+                await container.LoadAssemblyAsync(Path.Combine(Folder, $"{name}.dll"), cancellationToken).ConfigureAwait(false);
 
-                instance = await container.CreateObjectAsync<TModule>(typeName, cancellationToken);
+                instance = await container.CreateObjectAsync<TModule>(typeName, cancellationToken).ConfigureAwait(false);
 
                 Containers.Add(name, container);
                 Modules.Add(name, instance);
@@ -153,7 +153,8 @@ namespace H.Modules
         {
             var values = await Task.WhenAll(
                 Containers
-                    .Select(async pair => (pair.Key, await pair.Value.GetTypesAsync(cancellationToken))));
+                    .Select(async pair => (pair.Key, await pair.Value.GetTypesAsync(cancellationToken).ConfigureAwait(false))))
+                .ConfigureAwait(false);
 
             return values.ToDictionary(
                 pair => pair.Key, 
@@ -163,7 +164,7 @@ namespace H.Modules
         /// <summary>
         /// 
         /// </summary>
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
             foreach (var pair in Modules)
             {
@@ -173,7 +174,7 @@ namespace H.Modules
                 }
                 if (pair.Value is IAsyncDisposable asyncDisposable)
                 {
-                    asyncDisposable.DisposeAsync().AsTask().Wait();
+                    await asyncDisposable.DisposeAsync().ConfigureAwait(false);
                 }
             }
             Modules.Clear();
@@ -183,6 +184,8 @@ namespace H.Modules
                 pair.Value.Dispose();
             }
             Containers.Clear();
+
+            GC.SuppressFinalize(this);
         }
 
         #endregion
