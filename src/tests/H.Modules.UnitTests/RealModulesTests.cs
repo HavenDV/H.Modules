@@ -27,7 +27,7 @@ namespace H.Modules.UnitTests
         }
 
         [TestMethod]
-        public async Task RssNotifier()
+        public async Task RssNotifierTest()
         {
             await BaseModuleTest<INotifier>(
                 "H.Notifiers.RssNotifier", 
@@ -50,7 +50,7 @@ namespace H.Modules.UnitTests
 
         [TestMethod]
         [Ignore]
-        public async Task NAudioRecorder()
+        public async Task NAudioRecorderTest()
         {
             await BaseModuleTest<IRecorder>(
                 "H.Recorders.NAudioRecorder",
@@ -61,6 +61,24 @@ namespace H.Modules.UnitTests
                     await instance.InitializeAsync(cancellationToken);
 
                     await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
+                });
+        }
+
+        [TestMethod]
+        public async Task WitAiConverterTest()
+        {
+            await BaseModuleTest<IConverter>(
+                "H.Converters.WitAiConverter",
+                "H.Converters.WitAiConverter",
+                "WitAiConverter",
+                async (instance, cancellationToken) =>
+                {
+                    instance.SetSetting("Token", "XZS4M3BUYV5LBMEWJKAGJ6HCPWZ5IDGY");
+                    
+                    var bytes = ResourcesUtilities.ReadFileAsBytes("проверка_проверка_8000.wav");
+                    var actual = await instance.ConvertAsync(bytes, cancellationToken);
+
+                    Assert.AreEqual("проверка", actual);
                 });
         }
 
