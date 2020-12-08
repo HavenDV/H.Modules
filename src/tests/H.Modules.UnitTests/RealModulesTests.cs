@@ -49,7 +49,6 @@ namespace H.Modules.UnitTests
         }
 
         [TestMethod]
-        [Ignore]
         public async Task NAudioRecorderTest()
         {
             await BaseModuleTest<IRecorder>(
