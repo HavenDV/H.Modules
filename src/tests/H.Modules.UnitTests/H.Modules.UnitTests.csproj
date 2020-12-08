@@ -5,27 +5,31 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <None Remove="TestFiles\H.NET.Core.dll" />
+    <None Remove="TestFiles\H.Core.dll" />
     <None Remove="TestFiles\H.Notifiers.RssNotifier.zip" />
     <None Remove="TestFiles\WitAiConverter.zip" />
     <None Remove="TestFiles\YandexConverter.zip" />
   </ItemGroup>
   
   <ItemGroup>
-    <EmbeddedResource Include="TestFiles\H.NET.Core.dll" />
+    <EmbeddedResource Include="TestFiles\H.Core.dll" />
     <EmbeddedResource Include="TestFiles\H.Notifiers.RssNotifier.zip" />
     <EmbeddedResource Include="TestFiles\WitAiConverter.zip" />
     <EmbeddedResource Include="TestFiles\проверка_проверка_8000.wav" />
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="H.Containers.Process" Version="0.3.12" />
-    <PackageReference Include="H.Core" Version="0.9.1" />
+    <PackageReference Include="H.Containers.Process" Version="0.3.13" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\libs\H.Modules\H.Modules.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="H.Core">
+      <HintPath>TestFiles\H.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 
 </Project>
