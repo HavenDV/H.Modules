@@ -47,6 +47,7 @@ namespace H.Modules.UnitTests
         }
 
         [TestMethod]
+        [Ignore("Recorders are not work on GitHub Actions.")]
         public async Task NAudioRecorderTest()
         {
             await BaseModuleTest<IRecorder>(

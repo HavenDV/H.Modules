@@ -27,6 +27,7 @@ namespace H.Modules.UnitTests
         }
 
         [TestMethod]
+        [Ignore("Recorders are not work on GitHub Actions.")]
         public async Task RecorderConverterStreamingRecognitionTest()
         {
             await BaseModuleTest<IRecorder, IConverter>(
@@ -71,6 +72,7 @@ namespace H.Modules.UnitTests
         }
 
         [TestMethod]
+        [Ignore("Recorders are not work on GitHub Actions.")]
         public async Task RecorderConverterConvertTest()
         {
             await BaseModuleTest<IRecorder, IConverter>(
