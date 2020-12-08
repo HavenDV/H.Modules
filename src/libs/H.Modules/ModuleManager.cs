@@ -79,22 +79,24 @@ namespace H.Modules
         /// 
         /// </summary>
         /// <typeparam name="TContainer"></typeparam>
+        /// <typeparam name="TSubModule"></typeparam>
         /// <param name="name"></param>
         /// <param name="typeName"></param>
         /// <param name="bytes"></param>
         /// <param name="initializeAction"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<TModule> AddModuleAsync<TContainer>(
+        public async Task<TSubModule> AddModuleAsync<TContainer, TSubModule>(
             string name,
             string typeName, 
             byte[] bytes,
             Action<TContainer>? initializeAction = null,
             CancellationToken cancellationToken = default)
             where TContainer : IContainer
+            where TSubModule : class, TModule
         {
             var container = CreateContainer<TContainer>(name);
-            TModule? instance = null;
+            TSubModule? instance = null;
             try
             {
                 initializeAction?.Invoke(container);
@@ -120,7 +122,7 @@ namespace H.Modules
 
                 await container.LoadAssemblyAsync(Path.Combine(Folder, $"{name}.dll"), cancellationToken).ConfigureAwait(false);
 
-                instance = await container.CreateObjectAsync<TModule>(typeName, cancellationToken).ConfigureAwait(false);
+                instance = await container.CreateObjectAsync<TSubModule>(typeName, cancellationToken).ConfigureAwait(false);
 
                 Containers.Add(name, container);
                 Modules.Add(name, instance);

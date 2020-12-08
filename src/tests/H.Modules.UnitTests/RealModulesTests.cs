@@ -29,7 +29,7 @@ namespace H.Modules.UnitTests
         [TestMethod]
         public async Task RssNotifier()
         {
-            await BaseModuleTest(
+            await BaseModuleTest<INotifier>(
                 "H.Notifiers.RssNotifier", 
                 "H.Notifiers.RssNotifier",
                 "RssNotifier",
@@ -48,11 +48,28 @@ namespace H.Modules.UnitTests
                 });
         }
 
-        public static async Task BaseModuleTest(
+        [TestMethod]
+        [Ignore]
+        public async Task NAudioRecorder()
+        {
+            await BaseModuleTest<IRecorder>(
+                "H.Recorders.NAudioRecorder",
+                "H.Recorders.NAudioRecorder",
+                "NAudioRecorder",
+                async (instance, cancellationToken) =>
+                {
+                    await instance.InitializeAsync(cancellationToken);
+
+                    await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
+                });
+        }
+
+        public static async Task BaseModuleTest<T>(
             string name, 
             string typeName, 
             string shortName,
-            Func<IModule, CancellationToken, Task> testFunc) 
+            Func<T, CancellationToken, Task> testFunc) 
+            where T : class, IModule
         {
             using var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(15));
             var cancellationToken = cancellationTokenSource.Token;
@@ -72,7 +89,7 @@ namespace H.Modules.UnitTests
 
             var bytes = ResourcesUtilities.ReadFileAsBytes($"{name}.zip");
 
-            using var instance = await manager.AddModuleAsync<ProcessContainer>(
+            using var instance = await manager.AddModuleAsync<ProcessContainer, T>(
                 name, 
                 typeName, 
                 bytes, 
