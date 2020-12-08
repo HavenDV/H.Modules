@@ -34,23 +34,39 @@ namespace H.Modules.UnitTests
                 "H.Converters.WitAiConverter",
                 async (recorder, converter, cancellationToken) =>
                 {
-                    recorder.Stopped += async (_, args) =>
-                    {
-                        var bytes = args.WavData?.ToArray() ?? throw new ArgumentNullException(nameof(args.WavData));
-                        var text = await converter.ConvertAsync(bytes, cancellationToken);
-
-                        Console.WriteLine(text);
-                    };
                     converter.SetSetting("Token", "XZS4M3BUYV5LBMEWJKAGJ6HCPWZ5IDGY");
+                    
                     await recorder.InitializeAsync(cancellationToken);
-
                     await recorder.StartAsync(cancellationToken);
+
+                    using var recognition = await converter.StartStreamingRecognitionAsync(cancellationToken);
+                    recognition.AfterPartialResults += (_, args) => Console.WriteLine($"{DateTime.Now:h:mm:ss.fff} AfterPartialResults: {args.Text}");
+                    recognition.AfterFinalResults += (_, args) => Console.WriteLine($"{DateTime.Now:h:mm:ss.fff} AfterFinalResults: {args.Text}");
+
+                    var wavHeader = recorder.WavHeader?.ToArray() ??
+                                    throw new InvalidOperationException("Recorder Wav Header is null");
+                    await recognition.WriteAsync(wavHeader, cancellationToken);
+
+                    if (recorder.RawData != null)
+                    {
+                        await recognition.WriteAsync(recorder.RawData.ToArray(), cancellationToken);
+                    }
+
+                    // ReSharper disable once AccessToDisposedClosure
+                    recorder.RawDataReceived += async (_, args) =>
+                    {
+                        if (args.RawData == null)
+                        {
+                            return;
+                        }
+
+                        await recognition.WriteAsync(args.RawData.ToArray(), cancellationToken);
+                    };
 
                     await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
 
                     await recorder.StopAsync(cancellationToken);
-                    
-                    await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
+                    await recognition.StopAsync(cancellationToken);
                 });
         }
 
