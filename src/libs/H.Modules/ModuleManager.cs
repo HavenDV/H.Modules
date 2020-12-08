@@ -110,17 +110,18 @@ namespace H.Modules
                 await container.InitializeAsync(cancellationToken).ConfigureAwait(false);
                 await container.StartAsync(cancellationToken).ConfigureAwait(false);
 
-                if (Directory.Exists(Folder))
+                var subFolder = Path.Combine(Folder, name);
+                if (Directory.Exists(subFolder))
                 {
-                    Directory.Delete(Folder, true);
+                    Directory.Delete(subFolder, true);
                 }
-                Directory.CreateDirectory(Folder);
-                var path = Path.Combine(Folder, $"{name}.zip");
+                Directory.CreateDirectory(subFolder);
+                var path = Path.Combine(subFolder, $"{name}.zip");
                 File.WriteAllBytes(path, bytes);
 
-                ZipFile.ExtractToDirectory(path, Folder);
+                ZipFile.ExtractToDirectory(path, subFolder);
 
-                await container.LoadAssemblyAsync(Path.Combine(Folder, $"{name}.dll"), cancellationToken).ConfigureAwait(false);
+                await container.LoadAssemblyAsync(Path.Combine(subFolder, $"{name}.dll"), cancellationToken).ConfigureAwait(false);
 
                 instance = await container.CreateObjectAsync<TSubModule>(typeName, cancellationToken).ConfigureAwait(false);
 
