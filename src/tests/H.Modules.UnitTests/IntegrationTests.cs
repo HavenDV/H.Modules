@@ -27,7 +27,6 @@ namespace H.Modules.UnitTests
         }
 
         [TestMethod]
-        [Ignore("Returned interfaces is not supported.")]
         public async Task RecorderConverterStreamingRecognitionTest()
         {
             await BaseModuleTest<IRecorder, IConverter>(
