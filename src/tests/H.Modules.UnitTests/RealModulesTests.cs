@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using H.Containers;
@@ -77,7 +76,7 @@ namespace H.Modules.UnitTests
                 name, 
                 typeName, 
                 bytes, 
-                container => container.LaunchInCurrentProcess = true,
+                container => container.LaunchInCurrentProcess = false,
                 cancellationToken);
 
             Assert.IsNotNull(instance);
@@ -100,7 +99,7 @@ namespace H.Modules.UnitTests
 
             Assert.AreEqual(shortName, instance.ShortName);
 
-            var availableSettings = instance.GetAvailableSettings().ToArray();
+            var availableSettings = instance.GetAvailableSettings();
             ShowList(availableSettings, "Available settings");
 
             await testFunc(instance, cancellationToken);
