@@ -11,7 +11,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace H.Modules.UnitTests
 {
     [TestClass]
-    public class RealModulesTests
+    public class SingleTests
     {
         [TestInitialize]
         public void TestInitialize()
@@ -31,8 +31,6 @@ namespace H.Modules.UnitTests
         {
             await BaseModuleTest<INotifier>(
                 "H.Notifiers.RssNotifier", 
-                "H.Notifiers.RssNotifier",
-                "RssNotifier",
                 async (instance, cancellationToken) =>
                 {
                     instance.SetSetting("IntervalInMilliseconds", "1000");
@@ -53,8 +51,6 @@ namespace H.Modules.UnitTests
         {
             await BaseModuleTest<IRecorder>(
                 "H.Recorders.NAudioRecorder",
-                "H.Recorders.NAudioRecorder",
-                "NAudioRecorder",
                 async (instance, cancellationToken) =>
                 {
                     await instance.InitializeAsync(cancellationToken);
@@ -68,8 +64,6 @@ namespace H.Modules.UnitTests
         {
             await BaseModuleTest<IConverter>(
                 "H.Converters.WitAiConverter",
-                "H.Converters.WitAiConverter",
-                "WitAiConverter",
                 async (instance, cancellationToken) =>
                 {
                     instance.SetSetting("Token", "XZS4M3BUYV5LBMEWJKAGJ6HCPWZ5IDGY");
@@ -83,8 +77,6 @@ namespace H.Modules.UnitTests
 
         public static async Task BaseModuleTest<T>(
             string name, 
-            string typeName, 
-            string shortName,
             Func<T, CancellationToken, Task> testFunc) 
             where T : class, IModule
         {
@@ -108,7 +100,7 @@ namespace H.Modules.UnitTests
 
             using var instance = await manager.AddModuleAsync<ProcessContainer, T>(
                 name, 
-                typeName, 
+                name, 
                 bytes, 
                 container => container.LaunchInCurrentProcess = false,
                 cancellationToken);
@@ -131,7 +123,7 @@ namespace H.Modules.UnitTests
             var types = await manager.GetTypesAsync(cancellationToken);
             ShowList(types, "Available types");
 
-            Assert.AreEqual(shortName, instance.ShortName);
+            Console.WriteLine($"{nameof(instance.ShortName)}: {instance.ShortName}");
 
             var availableSettings = instance.GetAvailableSettings();
             ShowList(availableSettings, "Available settings");
