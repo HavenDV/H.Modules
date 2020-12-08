@@ -27,7 +27,8 @@ namespace H.Modules.UnitTests
         }
 
         [TestMethod]
-        public async Task RecorderConverterTest()
+        [Ignore("Returned interfaces is not supported.")]
+        public async Task RecorderConverterStreamingRecognitionTest()
         {
             await BaseModuleTest<IRecorder, IConverter>(
                 "H.Recorders.NAudioRecorder",
@@ -35,7 +36,7 @@ namespace H.Modules.UnitTests
                 async (recorder, converter, cancellationToken) =>
                 {
                     converter.SetSetting("Token", "XZS4M3BUYV5LBMEWJKAGJ6HCPWZ5IDGY");
-                    
+
                     await recorder.InitializeAsync(cancellationToken);
                     await recorder.StartAsync(cancellationToken);
 
@@ -67,6 +68,34 @@ namespace H.Modules.UnitTests
 
                     await recorder.StopAsync(cancellationToken);
                     await recognition.StopAsync(cancellationToken);
+                });
+        }
+
+        [TestMethod]
+        public async Task RecorderConverterConvertTest()
+        {
+            await BaseModuleTest<IRecorder, IConverter>(
+                "H.Recorders.NAudioRecorder",
+                "H.Converters.WitAiConverter",
+                async (recorder, converter, cancellationToken) =>
+                {
+                    converter.SetSetting("Token", "XZS4M3BUYV5LBMEWJKAGJ6HCPWZ5IDGY");
+
+                    await recorder.InitializeAsync(cancellationToken);
+                    await recorder.StartAsync(cancellationToken);
+
+                    await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
+
+                    await recorder.StopAsync(cancellationToken);
+
+                    var bytes = recorder.WavData?.ToArray();
+                    if (bytes == null)
+                    {
+                        return;
+                    }
+
+                    var result = await converter.ConvertAsync(bytes, cancellationToken);
+                    Console.WriteLine(result);
                 });
         }
 
