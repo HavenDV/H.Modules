@@ -54,53 +54,29 @@ namespace H.Modules
 
         #region Methods
 
-        private static TContainer CreateContainer<TContainer>(string name)
-            where TContainer : IContainer
-        {
-            return (TContainer)Activator.CreateInstance(typeof(TContainer), name);
-        }
-
         /// <summary>
         /// 
         /// </summary>
-        public void TestInitialize()
-        {
-            try
-            {
-                //Application.Clear();
-                //Application.GetPathAndUnpackIfRequired();
-            }
-            catch (UnauthorizedAccessException)
-            {
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="TContainer"></typeparam>
         /// <typeparam name="TSubModule"></typeparam>
+        /// <param name="container"></param>
         /// <param name="name"></param>
         /// <param name="typeName"></param>
         /// <param name="bytes"></param>
-        /// <param name="initializeAction"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<TSubModule> AddModuleAsync<TContainer, TSubModule>(
+        public async Task<TSubModule> AddModuleAsync<TSubModule>(
+            IContainer container,
             string name,
             string typeName, 
             byte[] bytes,
-            Action<TContainer>? initializeAction = null,
             CancellationToken cancellationToken = default)
-            where TContainer : IContainer
             where TSubModule : class, TModule
         {
-            var container = CreateContainer<TContainer>(name);
+            container = container ?? throw new ArgumentNullException(nameof(container));
+            
             TSubModule? instance = null;
             try
             {
-                initializeAction?.Invoke(container);
-
                 //container.MethodsCancellationToken = cancellationTokenSource.Token,
                 container.ExceptionOccurred += (_, exception) =>
                 {

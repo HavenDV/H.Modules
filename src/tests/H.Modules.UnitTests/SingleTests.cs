@@ -107,11 +107,11 @@ namespace H.Modules.UnitTests
 
             var bytes = ResourcesUtilities.ReadFileAsBytes($"{name}.zip");
 
-            using var instance = await manager.AddModuleAsync<ProcessContainer, T>(
+            using var instance = await manager.AddModuleAsync<T>(
+                new ProcessContainer(name),
                 name, 
                 name, 
                 bytes, 
-                container => container.LaunchInCurrentProcess = false,
                 cancellationToken);
 
             Assert.IsNotNull(instance);

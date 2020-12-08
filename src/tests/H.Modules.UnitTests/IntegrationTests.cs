@@ -70,6 +70,14 @@ namespace H.Modules.UnitTests
                 });
         }
 
+        private static IContainer CreateContainer(string name)
+        {
+            return new ProcessContainer(name)
+            {
+                LaunchInCurrentProcess = false,
+            };
+        }
+        
         public static async Task BaseModuleTest<T1, T2>(
             string name1,
             string name2,
@@ -93,17 +101,17 @@ namespace H.Modules.UnitTests
                 cancellationTokenSource.Cancel();
             };
             
-            using var instance1 = await manager.AddModuleAsync<AssemblyLoadContextContainer, T1>(
+            using var instance1 = await manager.AddModuleAsync<T1>(
+                CreateContainer(name1),
                 name1, 
                 name1,
-                ResourcesUtilities.ReadFileAsBytes($"{name1}.zip"), 
-                _ => { },
+                ResourcesUtilities.ReadFileAsBytes($"{name1}.zip"),
                 cancellationToken);
-            using var instance2 = await manager.AddModuleAsync<AssemblyLoadContextContainer, T2>(
+            using var instance2 = await manager.AddModuleAsync<T2>(
+                CreateContainer(name2),
                 name2,
                 name2,
                 ResourcesUtilities.ReadFileAsBytes($"{name2}.zip"),
-                _ => { },
                 cancellationToken);
 
             Assert.IsNotNull(instance1);
