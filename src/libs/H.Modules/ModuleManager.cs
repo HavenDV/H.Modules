@@ -20,8 +20,8 @@ namespace H.Modules
 
         private string Folder { get; }
 
-        private Dictionary<string, IContainer> Containers { get; } = new Dictionary<string, IContainer>();
-        private Dictionary<string, TModule> Modules { get; } = new Dictionary<string, TModule>();
+        private Dictionary<string, IContainer> Containers { get; } = new ();
+        private Dictionary<string, TModule> Modules { get; } = new ();
 
         #endregion
 
