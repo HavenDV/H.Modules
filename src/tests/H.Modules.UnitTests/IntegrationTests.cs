@@ -13,19 +13,6 @@ namespace H.Modules.UnitTests
     [TestClass]
     public class IntegrationTests
     {
-        [TestInitialize]
-        public void TestInitialize()
-        {
-            try
-            {
-                Application.Clear();
-                Application.GetPathAndUnpackIfRequired();
-            }
-            catch (UnauthorizedAccessException)
-            {
-            }
-        }
-
         [TestMethod]
         [Ignore("Recorders are not work on GitHub Actions.")]
         public async Task RecorderConverterStreamingRecognitionTest()

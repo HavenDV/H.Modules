@@ -13,19 +13,6 @@ namespace H.Modules.UnitTests
     [TestClass]
     public class SingleTests
     {
-        [TestInitialize]
-        public void TestInitialize()
-        {
-            try
-            {
-                Application.Clear();
-                Application.GetPathAndUnpackIfRequired();
-            }
-            catch (UnauthorizedAccessException)
-            {
-            }
-        }
-
         [TestMethod]
         public async Task RssNotifierTest()
         {
