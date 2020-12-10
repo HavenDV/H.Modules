@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using H.Containers;
@@ -26,26 +25,14 @@ namespace H.Modules.UnitTests
                 {
                     converter.SetSetting("Token", "XZS4M3BUYV5LBMEWJKAGJ6HCPWZ5IDGY");
 
-                    await recorder.InitializeAsync(cancellationToken);
                     await recorder.StartAsync(cancellationToken);
 
                     using var recognition = await converter.StartStreamingRecognitionAsync(cancellationToken);
                     recognition.PartialResultsReceived += (_, value) => Console.WriteLine($"{DateTime.Now:h:mm:ss.fff} {nameof(recognition.PartialResultsReceived)}: {value}");
                     recognition.FinalResultsReceived += (_, value) => Console.WriteLine($"{DateTime.Now:h:mm:ss.fff} {nameof(recognition.FinalResultsReceived)}: {value}");
 
-                    await recognition.WriteAsync(recorder.WavHeader, cancellationToken);
-
-                    if (recorder.RawData.Any())
-                    {
-                        await recognition.WriteAsync(recorder.RawData, cancellationToken);
-                    }
-
-                    // ReSharper disable once AccessToDisposedClosure
-                    recorder.RawDataReceived += async (_, bytes) =>
-                    {
-                        await recognition.WriteAsync(bytes, cancellationToken);
-                    };
-
+                    await recognition.BindRecorderAsync(recorder, true, cancellationToken);
+                    
                     await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
 
                     await recorder.StopAsync(cancellationToken);
@@ -63,21 +50,14 @@ namespace H.Modules.UnitTests
                 async (recorder, converter, cancellationToken) =>
                 {
                     converter.SetSetting("Token", "XZS4M3BUYV5LBMEWJKAGJ6HCPWZ5IDGY");
-
-                    await recorder.InitializeAsync(cancellationToken);
+                    
                     await recorder.StartAsync(cancellationToken);
 
                     await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
 
                     await recorder.StopAsync(cancellationToken);
 
-                    var bytes = recorder.WavData?.ToArray();
-                    if (bytes == null)
-                    {
-                        return;
-                    }
-
-                    var result = await converter.ConvertAsync(bytes, cancellationToken);
+                    var result = await converter.ConvertAsync(recorder.WavData, cancellationToken);
                     Console.WriteLine(result);
                 });
         }

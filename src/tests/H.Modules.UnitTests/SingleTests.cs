@@ -48,8 +48,6 @@ namespace H.Modules.UnitTests
                     {
                         Console.WriteLine($"{nameof(instance.RawDataReceived)}: {args.Length}");
                     };
-                    await instance.InitializeAsync(cancellationToken);
-
                     await instance.StartAsync(cancellationToken);
 
                     await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
