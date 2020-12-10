@@ -6,6 +6,7 @@ using H.Containers;
 using H.Core;
 using H.Core.Converters;
 using H.Core.Recorders;
+using H.Modules.UnitTests.Extensions;
 using H.Modules.UnitTests.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -69,7 +70,7 @@ namespace H.Modules.UnitTests
                 LaunchInCurrentProcess = false,
             };
         }
-        
+
         public static async Task BaseModuleTest<T1, T2>(
             string name1,
             string name2,
@@ -111,18 +112,7 @@ namespace H.Modules.UnitTests
 
             foreach (var instance in new IModule[] { instance1, instance2 })
             {
-                instance.NewCommand += (_, command) =>
-                {
-                    Console.WriteLine($"{nameof(instance.NewCommand)}: {command}");
-                };
-                instance.ExceptionOccurred += (_, exception) =>
-                {
-                    Console.WriteLine($"{nameof(instance.ExceptionOccurred)}: {exception}");
-                };
-                instance.LogReceived += (_, log) =>
-                {
-                    Console.WriteLine($"{nameof(instance.LogReceived)}: {log}");
-                };
+                instance.EnableLog();
             }
             
             await testFunc(instance1, instance2, cancellationToken);

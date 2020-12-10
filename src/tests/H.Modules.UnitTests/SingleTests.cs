@@ -8,6 +8,7 @@ using H.Core;
 using H.Core.Converters;
 using H.Core.Notifiers;
 using H.Core.Recorders;
+using H.Modules.UnitTests.Extensions;
 using H.Modules.UnitTests.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -104,26 +105,10 @@ namespace H.Modules.UnitTests
 
             Assert.IsNotNull(instance);
 
-            instance.NewCommand += (_, command) =>
-            {
-                Console.WriteLine($"{nameof(instance.NewCommand)}: {command}");
-            };
-            instance.ExceptionOccurred += (_, exception) =>
-            {
-                Console.WriteLine($"{nameof(instance.ExceptionOccurred)}: {exception}");
-            };
-            instance.LogReceived += (_, log) =>
-            {
-                Console.WriteLine($"{nameof(instance.LogReceived)}: {log}");
-            };
-            
-            var types = await manager.GetTypesAsync(cancellationToken);
-            ShowList(types, "Available types");
-
-            Console.WriteLine($"{nameof(instance.ShortName)}: {instance.ShortName}");
-
-            var availableSettings = instance.GetAvailableSettings();
-            ShowList(availableSettings, "Available settings");
+            instance.EnableLog();
+            (await manager.GetTypesAsync(cancellationToken)).Log("Available types");
+            instance.ShortName.Log(nameof(instance.ShortName));
+            instance.GetAvailableSettings().Log("Available settings");
 
             await testFunc(instance, cancellationToken);
 
@@ -139,17 +124,6 @@ namespace H.Modules.UnitTests
             {
                 Assert.Fail(receivedException.ToString());
             }
-        }
-
-        private static void ShowList<T>(ICollection<T> list, string name)
-        {
-            Console.WriteLine($"{name}: {list.Count}");
-            foreach (var value in list)
-            {
-                Console.WriteLine($" - {value}");
-            }
-
-            Console.WriteLine();
         }
     }
 }
