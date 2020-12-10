@@ -6,8 +6,8 @@ using H.Containers;
 using H.Core;
 using H.Core.Converters;
 using H.Core.Recorders;
+using H.IO.Utilities;
 using H.Modules.UnitTests.Extensions;
-using H.Modules.UnitTests.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace H.Modules.UnitTests
