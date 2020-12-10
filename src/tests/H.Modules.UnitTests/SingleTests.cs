@@ -5,6 +5,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using H.Containers;
 using H.Core;
+using H.Core.Converters;
+using H.Core.Notifiers;
+using H.Core.Recorders;
 using H.Modules.UnitTests.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -43,8 +46,7 @@ namespace H.Modules.UnitTests
                 {
                     instance.RawDataReceived += (_, args) =>
                     {
-                        Console.WriteLine(
-                            $"{nameof(instance.RawDataReceived)}: {args.RawData?.Count ?? 0}, {args.WavData?.Count ?? 0}");
+                        Console.WriteLine($"{nameof(instance.RawDataReceived)}: {args.Length}");
                     };
                     await instance.InitializeAsync(cancellationToken);
 

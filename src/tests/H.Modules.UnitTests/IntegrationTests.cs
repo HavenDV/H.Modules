@@ -5,6 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using H.Containers;
 using H.Core;
+using H.Core.Converters;
+using H.Core.Recorders;
 using H.Modules.UnitTests.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -28,27 +30,20 @@ namespace H.Modules.UnitTests
                     await recorder.StartAsync(cancellationToken);
 
                     using var recognition = await converter.StartStreamingRecognitionAsync(cancellationToken);
-                    recognition.AfterPartialResults += (_, args) => Console.WriteLine($"{DateTime.Now:h:mm:ss.fff} AfterPartialResults: {args.Text}");
-                    recognition.AfterFinalResults += (_, args) => Console.WriteLine($"{DateTime.Now:h:mm:ss.fff} AfterFinalResults: {args.Text}");
+                    recognition.PartialResultsReceived += (_, value) => Console.WriteLine($"{DateTime.Now:h:mm:ss.fff} {nameof(recognition.PartialResultsReceived)}: {value}");
+                    recognition.FinalResultsReceived += (_, value) => Console.WriteLine($"{DateTime.Now:h:mm:ss.fff} {nameof(recognition.FinalResultsReceived)}: {value}");
 
-                    var wavHeader = recorder.WavHeader?.ToArray() ??
-                                    throw new InvalidOperationException("Recorder Wav Header is null");
-                    await recognition.WriteAsync(wavHeader, cancellationToken);
+                    await recognition.WriteAsync(recorder.WavHeader, cancellationToken);
 
-                    if (recorder.RawData != null)
+                    if (recorder.RawData.Any())
                     {
-                        await recognition.WriteAsync(recorder.RawData.ToArray(), cancellationToken);
+                        await recognition.WriteAsync(recorder.RawData, cancellationToken);
                     }
 
                     // ReSharper disable once AccessToDisposedClosure
-                    recorder.RawDataReceived += async (_, args) =>
+                    recorder.RawDataReceived += async (_, bytes) =>
                     {
-                        if (args.RawData == null)
-                        {
-                            return;
-                        }
-
-                        await recognition.WriteAsync(args.RawData.ToArray(), cancellationToken);
+                        await recognition.WriteAsync(bytes, cancellationToken);
                     };
 
                     await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
