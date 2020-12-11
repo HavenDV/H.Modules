@@ -17,6 +17,7 @@ namespace H.Modules.UnitTests
     public class IntegrationTests
     {
         [TestMethod]
+        [Ignore("Recorders are not work on GitHub Actions.")]
         public async Task RecorderConverterStreamingRecognitionTest()
         {
             await BaseModuleTest<IRecorder, IConverter>(
