@@ -6,6 +6,7 @@ using H.Containers;
 using H.Core;
 using H.Core.Converters;
 using H.Core.Recorders;
+using H.Core.Utilities;
 using H.IO.Utilities;
 using H.Modules.UnitTests.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -26,18 +27,16 @@ namespace H.Modules.UnitTests
                 {
                     converter.SetSetting("Token", "XZS4M3BUYV5LBMEWJKAGJ6HCPWZ5IDGY");
 
-                    await recorder.StartAsync(cancellationToken);
-
-                    using var recognition = await converter.StartStreamingRecognitionAsync(cancellationToken);
+                    var exceptions = new ExceptionsBag();
+                    using var recognition = await converter.StartStreamingRecognitionAsync(recorder, true, exceptions, cancellationToken);
                     recognition.PartialResultsReceived += (_, value) => Console.WriteLine($"{DateTime.Now:h:mm:ss.fff} {nameof(recognition.PartialResultsReceived)}: {value}");
                     recognition.FinalResultsReceived += (_, value) => Console.WriteLine($"{DateTime.Now:h:mm:ss.fff} {nameof(recognition.FinalResultsReceived)}: {value}");
 
-                    await recognition.BindRecorderAsync(recorder, true, cancellationToken);
-                    
                     await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
 
-                    await recorder.StopAsync(cancellationToken);
                     await recognition.StopAsync(cancellationToken);
+                    
+                    exceptions.EnsureNoExceptions();
                 });
         }
 
