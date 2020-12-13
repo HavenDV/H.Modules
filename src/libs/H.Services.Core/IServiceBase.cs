@@ -9,6 +9,8 @@ namespace H.Services.Core
     /// </summary>
     public interface IServiceBase : IAsyncDisposable
     {
+        #region Properties
+
         /// <summary>
         /// 
         /// </summary>
@@ -19,11 +21,26 @@ namespace H.Services.Core
         /// </summary>
         public State DisposeState { get; set; }
 
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        /// 
+        /// </summary>
+        event EventHandler<Exception>? ExceptionOccurred;
+
+        #endregion
+
+        #region Methods
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public Task InitializeAsync(CancellationToken cancellationToken = default);
+
+        #endregion
     }
 }

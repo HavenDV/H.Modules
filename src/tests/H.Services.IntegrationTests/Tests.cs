@@ -19,36 +19,44 @@ namespace H.Services.IntegrationTests
             using var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(30));
             var cancellationToken = cancellationTokenSource.Token;
 
-            await using var service = new RecognitionService(
-                new ModuleFinder(
-                    new StaticModuleService(
-                        new NAudioRecorder(),
-                        new WitAiConverter
-                        {
-                            Token = "XZS4M3BUYV5LBMEWJKAGJ6HCPWZ5IDGY",
-                        })));
+            await using var moduleService = new StaticModuleService(
+                new NAudioRecorder(),
+                new WitAiConverter
+                {
+                    Token = "XZS4M3BUYV5LBMEWJKAGJ6HCPWZ5IDGY",
+                });
+            await using var recognitionService = new RecognitionService(new ModuleFinder(moduleService));
 
             var exceptions = new ExceptionsBag();
-            service.ExceptionOccurred += (_, exception) =>
+            foreach (var service in new ICommandProducer[] { moduleService, recognitionService })
             {
-                Console.WriteLine($"{nameof(service.ExceptionOccurred)}: {exception}");
-                exceptions.OnOccurred(exception);
+                service.ExceptionOccurred += (_, exception) =>
+                {
+                    Console.WriteLine($"{nameof(service.ExceptionOccurred)}: {exception}");
+                    exceptions.OnOccurred(exception);
 
-                // ReSharper disable once AccessToDisposedClosure
-                cancellationTokenSource.Cancel();
+                    // ReSharper disable once AccessToDisposedClosure
+                    cancellationTokenSource.Cancel();
+                };
+                service.CommandReceived += (_, value) =>
+                {
+                    Console.WriteLine($"{nameof(service.CommandReceived)}: {value}");
+                };
+            }
+            recognitionService.PreviewCommandReceived += (_, value) =>
+            {
+                Console.WriteLine($"{nameof(recognitionService.PreviewCommandReceived)}: {value}");
             };
-            service.CommandReceived += (_, value) => Console.WriteLine($"{nameof(service.CommandReceived)}: {value}");
-            service.PreviewCommandReceived += (_, value) => Console.WriteLine($"{nameof(service.PreviewCommandReceived)}: {value}");
 
-            await service.StartAsync(cancellationToken);
+            await recognitionService.StartAsync(cancellationToken);
 
             await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
 
-            await service.StartAsync(cancellationToken);
+            await recognitionService.StartAsync(cancellationToken);
 
             await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
             
-            await service.StopAsync(cancellationToken);
+            await recognitionService.StopAsync(cancellationToken);
 
             try
             {
