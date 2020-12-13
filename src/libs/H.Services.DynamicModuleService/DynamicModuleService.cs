@@ -10,7 +10,7 @@ using H.IO.Utilities;
 using H.Modules;
 using H.Services.Core;
 
-namespace H.Services.Modules
+namespace H.Services
 {
     /// <summary>
     /// 

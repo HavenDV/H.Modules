@@ -6,14 +6,12 @@
 
   <PropertyGroup Label="NuGet">
     <Version>0.1.0</Version>
-    <Description>All-in-One Package</Description>
+    <Description></Description>
     <PackageReleaseNotes></PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\H.Services.Core\H.Services.Core.csproj" />
-    <ProjectReference Include="..\H.Services.ModuleService\H.Services.ModuleService.csproj" />
-    <ProjectReference Include="..\H.Services.RecognitionService\H.Services.RecognitionService.csproj" />
   </ItemGroup>
   
 </Project>

@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using H.Core.Utilities;
 using H.Services.Core;
-using H.Services.Modules;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace H.Services.IntegrationTests

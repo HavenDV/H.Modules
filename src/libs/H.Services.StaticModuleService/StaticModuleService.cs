@@ -6,7 +6,7 @@ using H.Core;
 using H.Recorders;
 using H.Services.Core;
 
-namespace H.Services.Modules
+namespace H.Services
 {
     /// <summary>
     /// 
