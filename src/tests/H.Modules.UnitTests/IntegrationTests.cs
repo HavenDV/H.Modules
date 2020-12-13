@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using H.Containers;
 using H.Core;
-using H.Core.Converters;
+using H.Core.Recognizers;
 using H.Core.Recorders;
 using H.Core.Utilities;
 using H.IO.Utilities;
@@ -20,14 +20,14 @@ namespace H.Modules.UnitTests
         [Ignore("Recorders are not work on GitHub Actions.")]
         public async Task RecorderConverterStreamingRecognitionTest()
         {
-            await BaseModuleTest<IRecorder, IConverter>(
+            await BaseModuleTest<IRecorder, IRecognizer>(
                 "H.Recorders.NAudioRecorder",
                 "H.Converters.WitAiConverter",
-                async (exceptions, recorder, converter, cancellationToken) =>
+                async (exceptions, recorder, recognizer, cancellationToken) =>
                 {
-                    converter.SetSetting("Token", "XZS4M3BUYV5LBMEWJKAGJ6HCPWZ5IDGY");
+                    recognizer.SetSetting("Token", "XZS4M3BUYV5LBMEWJKAGJ6HCPWZ5IDGY");
                     
-                    using var recognition = await converter.StartStreamingRecognitionAsync(recorder, true, exceptions, cancellationToken);
+                    using var recognition = await recognizer.StartStreamingRecognitionAsync(recorder, true, exceptions, cancellationToken);
                     recognition.PartialResultsReceived += (_, value) => Console.WriteLine($"{DateTime.Now:h:mm:ss.fff} {nameof(recognition.PartialResultsReceived)}: {value}");
                     recognition.FinalResultsReceived += (_, value) => Console.WriteLine($"{DateTime.Now:h:mm:ss.fff} {nameof(recognition.FinalResultsReceived)}: {value}");
 
@@ -41,12 +41,12 @@ namespace H.Modules.UnitTests
         [Ignore("Recorders are not work on GitHub Actions.")]
         public async Task RecorderConverterConvertTest()
         {
-            await BaseModuleTest<IRecorder, IConverter>(
+            await BaseModuleTest<IRecorder, IRecognizer>(
                 "H.Recorders.NAudioRecorder",
                 "H.Converters.WitAiConverter",
-                async (_, recorder, converter, cancellationToken) =>
+                async (_, recorder, recognizer, cancellationToken) =>
                 {
-                    converter.SetSetting("Token", "XZS4M3BUYV5LBMEWJKAGJ6HCPWZ5IDGY");
+                    recognizer.SetSetting("Token", "XZS4M3BUYV5LBMEWJKAGJ6HCPWZ5IDGY");
                     
                     await recorder.StartAsync(cancellationToken);
 
@@ -54,7 +54,7 @@ namespace H.Modules.UnitTests
 
                     await recorder.StopAsync(cancellationToken);
 
-                    var result = await converter.ConvertAsync(recorder.WavData, cancellationToken);
+                    var result = await recognizer.ConvertAsync(recorder.WavData, cancellationToken);
                     Console.WriteLine(result);
                 });
         }

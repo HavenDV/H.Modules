@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using H.Containers;
 using H.Core;
-using H.Core.Converters;
+using H.Core.Recognizers;
 using H.Core.Notifiers;
 using H.Core.Recorders;
 using H.IO.Utilities;
@@ -59,7 +59,7 @@ namespace H.Modules.UnitTests
         [TestMethod]
         public async Task WitAiConverterTest()
         {
-            await BaseModuleTest<IConverter>(
+            await BaseModuleTest<IRecognizer>(
                 "H.Converters.WitAiConverter",
                 async (instance, cancellationToken) =>
                 {

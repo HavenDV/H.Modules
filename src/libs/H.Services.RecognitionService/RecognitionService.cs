@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using H.Core.Converters;
+using H.Core.Recognizers;
 using H.Core.Recorders;
 using H.Core.Utilities;
 using H.Services.Core;
@@ -17,7 +17,7 @@ namespace H.Services
 
         private ModuleFinder ModuleFinder { get; }
 
-        private IConverter Converter => ModuleFinder.Converter;
+        private IRecognizer Recognizer => ModuleFinder.Recognizer;
         private IRecorder Recorder => ModuleFinder.Recorder;
         
         private IStreamingRecognition? CurrentRecognition { get; set; }
@@ -83,7 +83,7 @@ namespace H.Services
             exceptions.ExceptionOccurred += (_, value) => OnExceptionOccurred(value);
             
             // TODO: EXCLUDE WRITE WAV HEADER FROM LOGIC.
-            CurrentRecognition = await Converter.StartStreamingRecognitionAsync(
+            CurrentRecognition = await Recognizer.StartStreamingRecognitionAsync(
                 Recorder, true, exceptions, cancellationToken)
                 .ConfigureAwait(false);
             CurrentRecognition.PartialResultsReceived += (_, value) => OnPreviewCommandReceived(value);

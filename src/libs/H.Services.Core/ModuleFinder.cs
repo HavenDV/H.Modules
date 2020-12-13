@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using H.Core.Converters;
+using H.Core.Recognizers;
 using H.Core.Recorders;
 
 namespace H.Services.Core
@@ -25,9 +25,9 @@ namespace H.Services.Core
         /// <summary>
         /// 
         /// </summary>
-        public IConverter Converter => (IConverter)ModuleServices
+        public IRecognizer Recognizer => (IRecognizer)ModuleServices
             .SelectMany(service => service.Modules)
-            .First(module => module.ShortName.EndsWith("Converter", StringComparison.OrdinalIgnoreCase));
+            .First(module => module.ShortName.EndsWith("Recognizer", StringComparison.OrdinalIgnoreCase));
 
         #endregion
 

@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using H.Containers;
 using H.Core;
-using H.Core.Converters;
+using H.Core.Recognizers;
 using H.Core.Recorders;
 using H.IO.Utilities;
 using H.Modules;
@@ -69,12 +69,12 @@ namespace H.Services
             {
                 var recorder = await AddAsync<IRecorder>("H.Recorders.NAudioRecorder", cancellationToken)
                     .ConfigureAwait(false);
-                var converter = await AddAsync<IConverter>("H.Converters.WitAiConverter", cancellationToken)
+                var recognizer = await AddAsync<IRecognizer>("H.Converters.WitAiConverter", cancellationToken)
                     .ConfigureAwait(false);
 
-                converter.SetSetting("Token", "XZS4M3BUYV5LBMEWJKAGJ6HCPWZ5IDGY");
+                recognizer.SetSetting("Token", "XZS4M3BUYV5LBMEWJKAGJ6HCPWZ5IDGY");
 
-                foreach (var module in new [] { recorder, converter })
+                foreach (var module in new [] { recorder, recognizer })
                 {
                     module.NewCommand += (_, value) => OnCommandReceived(value);
                     module.ExceptionOccurred += (_, value) => OnExceptionOccurred(value);
