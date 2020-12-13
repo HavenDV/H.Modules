@@ -36,11 +36,6 @@ namespace H.Services
         /// </summary>
         public event EventHandler<string>? CommandReceived;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public event EventHandler<Exception>? ExceptionOccurred;
-
         private void OnPreviewCommandReceived(string value)
         {
             PreviewCommandReceived?.Invoke(this, value);
@@ -49,11 +44,6 @@ namespace H.Services
         private void OnCommandReceived(string value)
         {
             CommandReceived?.Invoke(this, value);
-        }
-
-        private void OnExceptionOccurred(Exception value)
-        {
-            ExceptionOccurred?.Invoke(this, value);
         }
 
         #endregion

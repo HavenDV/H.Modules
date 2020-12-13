@@ -11,6 +11,8 @@ namespace H.Services.Core
     /// </summary>
     public class ServiceBase : IServiceBase
     {
+        #region Properties
+
         /// <summary>
         /// 
         /// </summary>
@@ -36,13 +38,35 @@ namespace H.Services.Core
         /// </summary>
         protected List<IDisposable> Disposables { get; } = new();
 
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public event EventHandler<Exception>? ExceptionOccurred;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        protected void OnExceptionOccurred(Exception value)
+        {
+            ExceptionOccurred?.Invoke(this, value);
+        }
+
+        #endregion
+
+        #region Methods
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="func"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        protected async Task InitializeAsync(Func<Task>? func = null, CancellationToken cancellationToken = default) =>
+        protected async Task InitializeAsync(Func<Task>? func, CancellationToken cancellationToken = default) =>
             await RunAsync(
                 state => InitializeState = state,
                 InitializeState,
@@ -109,5 +133,7 @@ namespace H.Services.Core
 
             setState(State.Completed);
         }
+        
+        #endregion
     }
 }

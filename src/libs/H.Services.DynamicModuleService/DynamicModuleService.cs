@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,6 +30,20 @@ namespace H.Services
 
         #endregion
 
+        #region Events
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public event EventHandler<string>? CommandReceived;
+
+        private void OnCommandReceived(string value)
+        {
+            CommandReceived?.Invoke(this, value);
+        }
+
+        #endregion
+        
         #region Constructors
 
         /// <summary>
@@ -58,9 +73,14 @@ namespace H.Services
                     .ConfigureAwait(false);
 
                 converter.SetSetting("Token", "XZS4M3BUYV5LBMEWJKAGJ6HCPWZ5IDGY");
-                
-                Modules.Add(recorder);
-                Modules.Add(converter);
+
+                foreach (var module in new [] { recorder, converter })
+                {
+                    module.NewCommand += (_, value) => OnCommandReceived(value);
+                    module.ExceptionOccurred += (_, value) => OnExceptionOccurred(value);
+                    
+                    Modules.Add(module);
+                }
             }, cancellationToken);
         }
         

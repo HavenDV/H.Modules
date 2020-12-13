@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using H.Converters;
@@ -22,6 +23,20 @@ namespace H.Services
 
         #endregion
 
+        #region Events
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public event EventHandler<string>? CommandReceived;
+
+        private void OnCommandReceived(string value)
+        {
+            CommandReceived?.Invoke(this, value);
+        }
+
+        #endregion
+        
         #region Methods
 
         /// <summary>
@@ -42,10 +57,13 @@ namespace H.Services
                     }
                 })
                 {
+                    module.NewCommand += (_, value) => OnCommandReceived(value);
+                    module.ExceptionOccurred += (_, value) => OnExceptionOccurred(value);
+
                     Modules.Add(module);
                     Disposables.Add(module);
                 }
-                
+
                 return Task.CompletedTask;
             }, cancellationToken);
         }
