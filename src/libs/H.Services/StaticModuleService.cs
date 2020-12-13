@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using H.Core;
-using H.Logic.Initializing;
+using H.Services.Core;
 
-namespace H.Logic
+namespace H.Services
 {
     /// <summary>
     /// 

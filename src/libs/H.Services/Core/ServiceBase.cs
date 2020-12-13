@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace H.Logic.Initializing
+namespace H.Services.Core
 {
     /// <summary>
     /// 

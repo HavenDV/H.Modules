@@ -1,4 +1,4 @@
-﻿namespace H.Logic.Initializing
+﻿namespace H.Services.Core
 {
     /// <summary>
     /// 

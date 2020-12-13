@@ -4,9 +4,9 @@ using System.Linq;
 using H.Core;
 using H.Core.Converters;
 using H.Core.Recorders;
-using H.Logic.Initializing;
+using H.Services.Core;
 
-namespace H.Logic
+namespace H.Services
 {
     /// <summary>
     /// 

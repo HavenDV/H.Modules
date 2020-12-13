@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using H.Core.Converters;
 using H.Core.Recorders;
 using H.Core.Utilities;
-using H.Logic.Initializing;
+using H.Services.Core;
 
-namespace H.Logic
+namespace H.Services
 {
     /// <summary>
     /// 

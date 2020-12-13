@@ -7,10 +7,10 @@ using H.Core;
 using H.Core.Converters;
 using H.Core.Recorders;
 using H.IO.Utilities;
-using H.Logic.Initializing;
 using H.Modules;
+using H.Services.Core;
 
-namespace H.Logic
+namespace H.Services
 {
     /// <summary>
     /// 
