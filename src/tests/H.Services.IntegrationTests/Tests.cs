@@ -11,6 +11,7 @@ namespace H.Services.IntegrationTests
     public class Tests
     {
         [TestMethod]
+        [Ignore("Recorders are not work on GitHub Actions.")]
         public async Task RecognitionServiceTest()
         {
             using var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(30));
