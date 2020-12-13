@@ -4,7 +4,7 @@ using System.Linq;
 using H.Core;
 using H.Services.Core;
 
-namespace H.Services
+namespace H.Services.Modules
 {
     /// <summary>
     /// 

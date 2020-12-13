@@ -11,13 +11,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="DynamicModules\H.Converters.WitAiConverter.zip" />
-    <None Remove="DynamicModules\H.Recorders.NAudioRecorder.zip" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="DynamicModules\H.Converters.WitAiConverter.zip" />
-    <EmbeddedResource Include="DynamicModules\H.Recorders.NAudioRecorder.zip" />
+    <EmbeddedResource Include="Modules\H.Converters.WitAiConverter.zip" />
+    <EmbeddedResource Include="Modules\H.Recorders.NAudioRecorder.zip" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,10 +34,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\H.Modules\H.Modules.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Modules\" />
   </ItemGroup>
   
 </Project>
