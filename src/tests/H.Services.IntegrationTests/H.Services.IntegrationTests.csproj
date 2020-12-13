@@ -5,8 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="H.Converters.WitAiConverter" Version="0.11.3" />
-    <PackageReference Include="H.Recorders.NAudioRecorder" Version="0.9.5.2" />
+    <PackageReference Include="H.Notifiers.RssNotifier" Version="0.12.0" />
+    <PackageReference Include="H.Recognizers.WitAiRecognizer" Version="0.12.0" />
+    <PackageReference Include="H.Recorders.NAudioRecorder" Version="0.12.0" />
   </ItemGroup>
 
   <ItemGroup>

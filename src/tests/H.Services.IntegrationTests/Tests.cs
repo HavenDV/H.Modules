@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using H.Converters;
+using H.Recognizers;
 using H.Core.Utilities;
+using H.Notifiers;
 using H.Recorders;
 using H.Services.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -21,9 +22,14 @@ namespace H.Services.IntegrationTests
 
             await using var moduleService = new StaticModuleService(
                 new NAudioRecorder(),
-                new WitAiConverter
+                new WitAiRecognizer
                 {
                     Token = "XZS4M3BUYV5LBMEWJKAGJ6HCPWZ5IDGY",
+                },
+                new TimerNotifier
+                {
+                    Command = "print Hello, World!",
+                    IntervalInMilliseconds = 3000,
                 });
             await using var recognitionService = new RecognitionService(new ModuleFinder(moduleService));
 
