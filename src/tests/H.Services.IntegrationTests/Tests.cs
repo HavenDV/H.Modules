@@ -19,7 +19,7 @@ namespace H.Services.IntegrationTests
             var cancellationToken = cancellationTokenSource.Token;
 
             await using var service = new RecognitionService(
-                new ModuleFinder(new DynamicModuleService()));
+                new ModuleFinder(new StaticModuleService()));
 
             var exceptions = new ExceptionsBag();
             service.ExceptionOccurred += (_, exception) =>

@@ -11,13 +11,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Modules\H.Converters.WitAiConverter.zip" />
-    <EmbeddedResource Include="Modules\H.Recorders.NAudioRecorder.zip" />
+    <EmbeddedResource Include="Modules\Embedded\*.zip" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="H.Containers.Process" Version="0.4.7.2" />
+    <PackageReference Include="H.Converters.WitAiConverter" Version="0.11.3" />
     <PackageReference Include="H.Core" Version="0.11.3" />
+    <PackageReference Include="H.Recorders.NAudioRecorder" Version="0.9.5.2" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
