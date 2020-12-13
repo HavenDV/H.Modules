@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using H.Containers;
 using H.Core;
+using H.Core.Converters;
 using H.Core.Recorders;
 using H.IO.Utilities;
 using H.Logic.Initializing;
@@ -24,7 +25,7 @@ namespace H.Logic
         /// <summary>
         /// 
         /// </summary>
-        public ICollection<IModule> Modules { get; } = new List<IModule>();
+        public List<IModule> Modules { get; } = new ();
 
         #endregion
 
@@ -47,14 +48,18 @@ namespace H.Logic
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public Task InitializeAsync(CancellationToken cancellationToken = default)
+        public override Task InitializeAsync(CancellationToken cancellationToken = default)
         {
             return InitializeAsync(async () =>
             {
-                await AddAsync<IRecorder>("H.Recorders.NAudioRecorder", cancellationToken)
+                var recorder = await AddAsync<IRecorder>("H.Recorders.NAudioRecorder", cancellationToken)
                     .ConfigureAwait(false);
-                await AddAsync<IRecorder>("H.Converters.WitAiConverter", cancellationToken)
+                var converter = await AddAsync<IConverter>("H.Converters.WitAiConverter", cancellationToken)
                     .ConfigureAwait(false);
+
+                converter.SetSetting("Token", "XZS4M3BUYV5LBMEWJKAGJ6HCPWZ5IDGY");
+                
+                Modules.AddRange(new []{ recorder, converter });
             }, cancellationToken);
         }
         

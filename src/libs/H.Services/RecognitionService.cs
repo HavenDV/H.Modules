@@ -79,6 +79,11 @@ namespace H.Logic
         /// <returns></returns>
         public async Task StartAsync(CancellationToken cancellationToken = default)
         {
+            if (InitializeState is not State.Completed)
+            {
+                await InitializeAsync(null, cancellationToken).ConfigureAwait(false);
+            }
+            
             if (CurrentRecognition != null)
             {
                 await StopAsync(cancellationToken).ConfigureAwait(false);

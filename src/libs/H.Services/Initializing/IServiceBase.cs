@@ -22,9 +22,8 @@ namespace H.Logic.Initializing
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="func"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public Task InitializeAsync(Func<Task>? func = null, CancellationToken cancellationToken = default);
+        public Task InitializeAsync(CancellationToken cancellationToken = default);
     }
 }

@@ -14,7 +14,7 @@ namespace H.Logic
         /// <summary>
         /// 
         /// </summary>
-        public ICollection<IModule> Modules { get; } = new List<IModule>();
+        public List<IModule> Modules { get; } = new ();
 
         #endregion
     }

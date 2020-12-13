@@ -42,7 +42,7 @@ namespace H.Logic.Initializing
         /// <param name="func"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task InitializeAsync(Func<Task>? func = null, CancellationToken cancellationToken = default) =>
+        protected async Task InitializeAsync(Func<Task>? func = null, CancellationToken cancellationToken = default) =>
             await RunAsync(
                 state => InitializeState = state,
                 InitializeState,
@@ -50,7 +50,7 @@ namespace H.Logic.Initializing
                 {
                     await Task
                         .WhenAll(Dependencies
-                            .Select(dependency => dependency.InitializeAsync(null, cancellationToken)))
+                            .Select(dependency => dependency.InitializeAsync(cancellationToken)))
                         .ConfigureAwait(false);
 
                     if (func != null)
@@ -58,6 +58,16 @@ namespace H.Logic.Initializing
                         await func().ConfigureAwait(false);
                     }
                 }).ConfigureAwait(false);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public virtual async Task InitializeAsync(CancellationToken cancellationToken = default)
+        {
+            await InitializeAsync(null, cancellationToken).ConfigureAwait(false);
+        }
 
         /// <summary>
         /// 
