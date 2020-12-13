@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using H.Converters;
 using H.Core;
-using H.Recorders;
 using H.Services.Core;
 
 namespace H.Services
@@ -36,36 +32,39 @@ namespace H.Services
         }
 
         #endregion
-        
+
+        #region Constructors
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="modules"></param>
+        public StaticModuleService(params IModule[] modules)
+        {
+            modules = modules ?? throw new ArgumentNullException(nameof(modules));
+
+            foreach (var module in modules)
+            {
+                Add(module);
+            }
+        }
+
+        #endregion
+
         #region Methods
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        public override Task InitializeAsync(CancellationToken cancellationToken = default)
+        /// <param name="module"></param>
+        public void Add(IModule module)
         {
-            return InitializeAsync(() =>
-            {
-                foreach (var module in new IModule[]
-                {
-                    new NAudioRecorder(),
-                    new WitAiConverter
-                    {
-                        Token = "XZS4M3BUYV5LBMEWJKAGJ6HCPWZ5IDGY",
-                    }
-                })
-                {
-                    module.NewCommand += (_, value) => OnCommandReceived(value);
-                    module.ExceptionOccurred += (_, value) => OnExceptionOccurred(value);
+            module = module ?? throw new ArgumentNullException(nameof(module));
+            module.NewCommand += (_, value) => OnCommandReceived(value);
+            module.ExceptionOccurred += (_, value) => OnExceptionOccurred(value);
 
-                    Modules.Add(module);
-                    Disposables.Add(module);
-                }
-
-                return Task.CompletedTask;
-            }, cancellationToken);
+            Modules.Add(module);
+            Disposables.Add(module);
         }
 
         #endregion

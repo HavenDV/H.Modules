@@ -12,11 +12,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="H.Converters.WitAiConverter" Version="0.11.3" />
-    <PackageReference Include="H.Recorders.NAudioRecorder" Version="0.9.5.2" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\H.Services.Core\H.Services.Core.csproj" />
   </ItemGroup>
   
