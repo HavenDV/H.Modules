@@ -11,7 +11,7 @@ namespace H.Services
     /// <summary>
     /// 
     /// </summary>
-    public sealed class RecognitionService : ServiceBase
+    public sealed class RecognitionService : ServiceBase, ICommandProducer
     {
         #region Properties
 
