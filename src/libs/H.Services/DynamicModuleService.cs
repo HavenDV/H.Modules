@@ -15,7 +15,7 @@ namespace H.Services
     /// <summary>
     /// 
     /// </summary>
-    public sealed class DynamicModuleService : ServiceBase
+    public sealed class DynamicModuleService : ServiceBase, IModuleService
     {
         #region Properties
 
@@ -25,7 +25,7 @@ namespace H.Services
         /// <summary>
         /// 
         /// </summary>
-        public List<IModule> Modules { get; } = new ();
+        public IList<IModule> Modules { get; } = new List<IModule>();
 
         #endregion
 
@@ -59,7 +59,8 @@ namespace H.Services
 
                 converter.SetSetting("Token", "XZS4M3BUYV5LBMEWJKAGJ6HCPWZ5IDGY");
                 
-                Modules.AddRange(new []{ recorder, converter });
+                Modules.Add(recorder);
+                Modules.Add(converter);
             }, cancellationToken);
         }
         

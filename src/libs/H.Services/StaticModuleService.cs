@@ -7,14 +7,14 @@ namespace H.Services
     /// <summary>
     /// 
     /// </summary>
-    public class StaticModuleService : ServiceBase
+    public class StaticModuleService : ServiceBase, IModuleService
     {
         #region Properties
 
         /// <summary>
         /// 
         /// </summary>
-        public List<IModule> Modules { get; } = new ();
+        public IList<IModule> Modules { get; } = new List<IModule>();
 
         #endregion
     }

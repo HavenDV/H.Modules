@@ -40,5 +40,9 @@
   <ItemGroup>
     <ProjectReference Include="..\H.Modules\H.Modules.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Modules\" />
+  </ItemGroup>
   
 </Project>

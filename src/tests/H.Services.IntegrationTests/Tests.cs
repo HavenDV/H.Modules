@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using H.Core.Utilities;
+using H.Services.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace H.Services.IntegrationTests
@@ -17,9 +18,7 @@ namespace H.Services.IntegrationTests
             var cancellationToken = cancellationTokenSource.Token;
 
             await using var service = new RecognitionService(
-                new ModuleService(
-                    new DynamicModuleService(), 
-                    new StaticModuleService()));
+                new ModuleFinder(new DynamicModuleService()));
 
             var exceptions = new ExceptionsBag();
             service.ExceptionOccurred += (_, exception) =>

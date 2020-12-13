@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using H.Core;
-using H.Core.Converters;
-using H.Core.Recorders;
 using H.Services.Core;
 
 namespace H.Services
@@ -11,37 +9,19 @@ namespace H.Services
     /// <summary>
     /// 
     /// </summary>
-    public class ModuleService : ServiceBase
+    public class ModuleService : ServiceBase, IModuleService
     {
         #region Properties
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public DynamicModuleService DynamicModuleService { get; }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        public StaticModuleService StaticModuleService { get; }
+        private DynamicModuleService DynamicModuleService { get; }
+        private StaticModuleService StaticModuleService { get; }
 
         /// <summary>
         /// 
         /// </summary>
-        public IEnumerable<IModule> Modules => StaticModuleService.Modules
-            .Concat(DynamicModuleService.Modules);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public IRecorder Recorder => (IRecorder)Modules
-            .First(module => module.ShortName.EndsWith("Recorder", StringComparison.OrdinalIgnoreCase));
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public IConverter Converter => (IConverter)Modules
-            .First(module => module.ShortName.EndsWith("Converter", StringComparison.OrdinalIgnoreCase));
+        public IList<IModule> Modules => StaticModuleService.Modules
+            .Concat(DynamicModuleService.Modules)
+            .ToList();
 
         #endregion
 

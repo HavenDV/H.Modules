@@ -15,10 +15,10 @@ namespace H.Services
     {
         #region Properties
 
-        private ModuleService ModuleService { get; }
+        private ModuleFinder ModuleFinder { get; }
 
-        private IConverter Converter => ModuleService.Converter;
-        private IRecorder Recorder => ModuleService.Recorder;
+        private IConverter Converter => ModuleFinder.Converter;
+        private IRecorder Recorder => ModuleFinder.Recorder;
         
         private IStreamingRecognition? CurrentRecognition { get; set; }
 
@@ -60,12 +60,12 @@ namespace H.Services
 
         #region Constructors
 
-        /// <param name="moduleService"></param>
-        public RecognitionService(ModuleService moduleService)
+        /// <param name="moduleFinder"></param>
+        public RecognitionService(ModuleFinder moduleFinder)
         {
-            ModuleService = moduleService ?? throw new ArgumentNullException(nameof(moduleService));
+            ModuleFinder = moduleFinder ?? throw new ArgumentNullException(nameof(moduleFinder));
             
-            Dependencies.Add(ModuleService);
+            Dependencies.Add(ModuleFinder);
         }
 
         #endregion
