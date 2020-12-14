@@ -46,7 +46,7 @@ namespace H.Services.IntegrationTests
                 };
             }
 
-            await BaseTests.Start5SecondsStart5SecondsStopTestAsync(recognitionService, cancellationToken);
+            await recognitionService.Start5SecondsStart5SecondsStopTestAsync(cancellationToken);
 
             exceptions.EnsureNoExceptions();
         }

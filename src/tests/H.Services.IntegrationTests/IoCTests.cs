@@ -83,7 +83,7 @@ namespace H.Services.IntegrationTests
             
             var recognitionService = container.Resolve<RecognitionService>();
             
-            await BaseTests.Start5SecondsStart5SecondsStopTestAsync(recognitionService, cancellationToken);
+            await recognitionService.Start5SecondsStart5SecondsStopTestAsync(cancellationToken);
 
             exceptions.EnsureNoExceptions();
         }

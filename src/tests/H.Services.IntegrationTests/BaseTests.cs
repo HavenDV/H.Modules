@@ -7,7 +7,7 @@ namespace H.Services.IntegrationTests
     public static class BaseTests
     {
         public static async Task Start5SecondsStart5SecondsStopTestAsync(
-            RecognitionService recognitionService, 
+            this RecognitionService recognitionService, 
             CancellationToken cancellationToken = default)
         {
             recognitionService.PreviewCommandReceived += (_, value) =>
