@@ -56,9 +56,9 @@ namespace H.Services.IntegrationTests
                 .AsImplementedInterfaces();
             builder
                 .RegisterType<StaticModuleService>()
+                .SingleInstance()
                 .AsImplementedInterfaces()
-                .AsSelf()
-                .SingleInstance();
+                .AsSelf();
             builder
                 .RegisterType<ModuleFinder>()
                 .SingleInstance()
