@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using H.Core.Recognizers;
 using H.Core.Recorders;
+using H.Core.Runners;
 
 namespace H.Services.Core
 {
@@ -29,6 +30,14 @@ namespace H.Services.Core
             .SelectMany(service => service.Modules)
             .First(module => module.ShortName.EndsWith("Recognizer", StringComparison.OrdinalIgnoreCase));
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public IEnumerable<IRunner> Runners => ModuleServices
+            .SelectMany(service => service.Modules)
+            .Where(module => module is IRunner)
+            .Cast<IRunner>();
+
         #endregion
 
         #region Constructors
@@ -42,6 +51,23 @@ namespace H.Services.Core
             {
                 Dependencies.Add(moduleService);
             }
+        }
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="arguments"></param>
+        /// <returns></returns>
+        public ICall? TryPrepareCall(string name, params string[] arguments)
+        {
+            return Runners
+                .Select(runner => runner.TryPrepareCall(name, arguments))
+                .FirstOrDefault(call => call != null);
         }
 
         #endregion

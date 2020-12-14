@@ -12,6 +12,7 @@
     <ProjectReference Include="..\H.Services.Core\H.Services.Core.csproj" />
     <ProjectReference Include="..\H.Services.DynamicModuleService\H.Services.DynamicModuleService.csproj" />
     <ProjectReference Include="..\H.Services.RecognitionService\H.Services.RecognitionService.csproj" />
+    <ProjectReference Include="..\H.Services.RunnerService\H.Services.RunnerService.csproj" />
     <ProjectReference Include="..\H.Services.StaticModuleService\H.Services.StaticModuleService.csproj" />
   </ItemGroup>
   

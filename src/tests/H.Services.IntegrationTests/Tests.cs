@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using H.Core.Recognizers;
 using H.Core.Recorders;
+using H.Core.Runners;
 using H.Recognizers;
 using H.Core.Utilities;
 using H.Notifiers;
@@ -44,11 +45,17 @@ namespace H.Services.IntegrationTests
                 {
                     Command = "print Hello, World!",
                     IntervalInMilliseconds = 3000,
+                },
+                new Runner
+                {
+                    Command.WithSingleArgument("print", Console.WriteLine),
                 });
-            await using var recognitionService = new RecognitionService(new ModuleFinder(moduleService));
-
+            await using var moduleFinder = new ModuleFinder(moduleService);
+            await using var recognitionService = new RecognitionService(moduleFinder);
+            await using var runnerService = new RunnerService(moduleFinder, moduleService, recognitionService);
+            
             var exceptions = new ExceptionsBag();
-            foreach (var service in new ICommandProducer[] { moduleService, recognitionService })
+            foreach (var service in new IServiceBase[] { moduleService, recognitionService, moduleFinder, runnerService })
             {
                 service.ExceptionOccurred += (_, exception) =>
                 {
@@ -58,6 +65,9 @@ namespace H.Services.IntegrationTests
                     // ReSharper disable once AccessToDisposedClosure
                     cancellationTokenSource.Cancel();
                 };
+            }
+            foreach (var service in new ICommandProducer[] { moduleService, recognitionService })
+            {
                 service.CommandReceived += (_, value) =>
                 {
                     Console.WriteLine($"{nameof(service.CommandReceived)}: {value}");
