@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using H.Core.Recognizers;
+using H.Core.Recorders;
 using H.Recognizers;
 using H.Core.Utilities;
 using H.Notifiers;
@@ -13,19 +16,30 @@ namespace H.Services.IntegrationTests
     [TestClass]
     public class Tests
     {
+        public static IRecorder CreateRecorder()
+        {
+            if (!NAudioRecorder.GetAvailableDevices().Any())
+            {
+                Assert.Inconclusive("No available devices for NAudioRecorder.");
+            }
+
+            return new NAudioRecorder();
+        }
+
+        public static IRecognizer CreateRecognizer() => new WitAiRecognizer
+        {
+            Token = "XZS4M3BUYV5LBMEWJKAGJ6HCPWZ5IDGY"
+        };
+
         [TestMethod]
-        [Ignore("Recorders are not work on GitHub Actions.")]
         public async Task RecognitionServiceTest()
         {
             using var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(30));
             var cancellationToken = cancellationTokenSource.Token;
 
             await using var moduleService = new StaticModuleService(
-                new NAudioRecorder(),
-                new WitAiRecognizer
-                {
-                    Token = "XZS4M3BUYV5LBMEWJKAGJ6HCPWZ5IDGY",
-                },
+                CreateRecorder(),
+                CreateRecognizer(),
                 new TimerNotifier
                 {
                     Command = "print Hello, World!",
