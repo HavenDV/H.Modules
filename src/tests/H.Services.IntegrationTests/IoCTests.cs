@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
-using H.Core.Recorders;
-using H.Core.Runners;
-using H.Recognizers;
 using H.Core.Utilities;
-using H.Notifiers;
-using H.Recorders;
 using H.Services.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -18,41 +12,22 @@ namespace H.Services.IntegrationTests
     [TestClass]
     public class IoCTests
     {
-        public static IRecorder CreateRecorder()
-        {
-            if (!NAudioRecorder.GetAvailableDevices().Any())
-            {
-                Assert.Inconclusive("No available devices for NAudioRecorder.");
-            }
-
-            return new NAudioRecorder();
-        }
 
         public static IContainer CreateContainer()
         {
             var builder = new ContainerBuilder();
 
             builder
-                .RegisterInstance(CreateRecorder())
+                .RegisterInstance(TestModules.CreateDefaultRecorder())
                 .AsImplementedInterfaces();
             builder
-                .RegisterInstance(new WitAiRecognizer
-                {
-                    Token = "XZS4M3BUYV5LBMEWJKAGJ6HCPWZ5IDGY"
-                })
+                .RegisterInstance(TestModules.CreateDefaultRecognizer())
                 .AsImplementedInterfaces();
             builder
-                .RegisterInstance(new TimerNotifier
-                {
-                    Command = "print Hello, World!",
-                    IntervalInMilliseconds = 3000,
-                })
+                .RegisterInstance(TestModules.CreateTimerNotifierWithPrintHelloWorldEach3Seconds())
                 .AsImplementedInterfaces();
             builder
-                .RegisterInstance(new Runner
-                {
-                    Command.WithSingleArgument("print", Console.WriteLine),
-                })
+                .RegisterInstance(TestModules.CreateRunnerWithPrintCommand())
                 .AsImplementedInterfaces();
             builder
                 .RegisterType<StaticModuleService>()
@@ -107,28 +82,8 @@ namespace H.Services.IntegrationTests
             }
             
             var recognitionService = container.Resolve<RecognitionService>();
-            recognitionService.PreviewCommandReceived += (_, value) =>
-            {
-                Console.WriteLine($"{nameof(RecognitionService.PreviewCommandReceived)}: {value}");
-            };
-
-            await recognitionService.StartAsync(cancellationToken);
-
-            await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
-
-            await recognitionService.StartAsync(cancellationToken);
-
-            await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
             
-            await recognitionService.StopAsync(cancellationToken);
-
-            try
-            {
-                await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
-            }
-            catch (OperationCanceledException)
-            {
-            }
+            await BaseTests.Start5SecondsStart5SecondsStopTestAsync(recognitionService, cancellationToken);
 
             exceptions.EnsureNoExceptions();
         }
