@@ -20,7 +20,8 @@ namespace H.Services.IntegrationTests
                 TestModules.CreateDefaultRecorder(),
                 TestModules.CreateDefaultRecognizer(),
                 TestModules.CreateTimerNotifierWithPrintHelloWorldEach3Seconds(),
-                TestModules.CreateRunnerWithPrintCommand()
+                TestModules.CreateRunnerWithPrintCommand(),
+                TestModules.CreateTelegramRunner()
             );
             await using var moduleFinder = new ModuleFinder(moduleService);
             await using var recognitionService = new RecognitionService(moduleFinder);

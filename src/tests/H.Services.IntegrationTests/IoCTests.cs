@@ -30,6 +30,9 @@ namespace H.Services.IntegrationTests
                 .RegisterInstance(TestModules.CreateRunnerWithPrintCommand())
                 .AsImplementedInterfaces();
             builder
+                .RegisterInstance(TestModules.CreateTelegramRunner())
+                .AsImplementedInterfaces();
+            builder
                 .RegisterType<StaticModuleService>()
                 .SingleInstance()
                 .AsImplementedInterfaces()

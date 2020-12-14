@@ -7,6 +7,7 @@ using H.Core.Runners;
 using H.Notifiers;
 using H.Recognizers;
 using H.Recorders;
+using H.Runners;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace H.Services.IntegrationTests
@@ -45,6 +46,15 @@ namespace H.Services.IntegrationTests
             return new Runner
             {
                 Command.WithSingleArgument("print", Console.WriteLine),
+            };
+        }
+
+        public static IRunner CreateTelegramRunner()
+        {
+            return new TelegramRunner
+            { 
+                Token = "1492150165:AAEq8RUEX1YOKjrMgMA8I-HHxrAy7dSmCvY",
+                UserId = 482553595,
             };
         }
     }
