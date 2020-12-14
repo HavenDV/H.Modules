@@ -51,13 +51,10 @@ namespace H.Services
             var name = values.ElementAt(0);
             var argument = values.ElementAtOrDefault(1) ?? string.Empty;
             
-            var call = ModuleFinder.TryPrepareCall(name, argument);
-            if (call == null)
-            {
-                return;
-            }
-            
-            await call.RunAsync(cancellationToken).ConfigureAwait(false);
+            await Task.WhenAll(ModuleFinder
+                    .GetCalls(name, argument)
+                    .Select(async call => await call.RunAsync(cancellationToken).ConfigureAwait(false)))
+                .ConfigureAwait(false);
         }
 
         #endregion

@@ -63,11 +63,13 @@ namespace H.Services.Core
         /// <param name="name"></param>
         /// <param name="arguments"></param>
         /// <returns></returns>
-        public ICall? TryPrepareCall(string name, params string[] arguments)
+        public IEnumerable<ICall> GetCalls(string name, params string[] arguments)
         {
             return Runners
                 .Select(runner => runner.TryPrepareCall(name, arguments))
-                .FirstOrDefault(call => call != null);
+                .Where(call => call != null)
+                // ReSharper disable once RedundantEnumerableCastCall
+                .Cast<ICall>();
         }
 
         #endregion
