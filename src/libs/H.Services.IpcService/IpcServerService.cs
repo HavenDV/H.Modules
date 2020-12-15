@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using H.Core;
 using H.Core.Runners;
 using H.Pipes;
 using H.Pipes.AccessControl;
@@ -21,12 +22,12 @@ namespace H.Services
         /// <summary>
         /// 
         /// </summary>
-        public Func<ConnectionEventArgs<string>, string>? ConnectedCommandFactory { get; set; }
+        public Func<ConnectionEventArgs<string>, ICommand>? ConnectedCommandFactory { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public Func<ConnectionEventArgs<string>, string>? DisconnectedCommandFactory { get; set; }
+        public Func<ConnectionEventArgs<string>, ICommand>? DisconnectedCommandFactory { get; set; }
 
         #endregion
 
@@ -123,7 +124,7 @@ namespace H.Services
         {
             try
             {
-                OnCommandReceived(args.Message ?? string.Empty);
+                OnCommandReceived(Command.Parse(args.Message ?? string.Empty));
             }
             catch (Exception exception)
             {

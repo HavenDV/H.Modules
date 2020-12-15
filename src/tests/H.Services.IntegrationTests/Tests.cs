@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using H.Core;
 using H.Core.Utilities;
 using H.Services.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -18,8 +19,8 @@ namespace H.Services.IntegrationTests
 
             await using var deskbandService = new IpcClientService("H.Deskband", "deskband")
             {
-                ConnectedCommandFactory = _ => "print Connected to H.DeskBand.",
-                DisconnectedCommandFactory = _ => "print Disconnected from H.DeskBand.",
+                ConnectedCommandFactory = _ => new Command("print", "Connected to H.DeskBand."),
+                DisconnectedCommandFactory = _ => new Command("print", "Disconnected from H.DeskBand."),
             };
             await using var moduleService = new StaticModuleService(
                 TestModules.CreateDefaultRecorder(),
