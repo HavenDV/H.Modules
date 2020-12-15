@@ -118,9 +118,9 @@ namespace H.Services
                     }
                     finally
                     {
-                        if (CancellationTokenSources.TryRemove(call, out source))
+                        if (CancellationTokenSources.TryRemove(call, out var tokenSource))
                         {
-                            source.Dispose();
+                            tokenSource.Dispose();
                         }
                     }
                 }, source.Token);
