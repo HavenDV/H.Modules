@@ -18,6 +18,16 @@ namespace H.Services
 
         private PipeServer<string> PipeServer { get; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public Func<ConnectionEventArgs<string>, string>? ConnectedCommandFactory { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Func<ConnectionEventArgs<string>, string>? DisconnectedCommandFactory { get; set; }
+
         #endregion
 
         #region Events
@@ -80,6 +90,11 @@ namespace H.Services
             try
             {
                 OnClientConnected(args.Connection.Name);
+
+                if (ConnectedCommandFactory != null)
+                {
+                    OnCommandReceived(ConnectedCommandFactory(args));
+                }
             }
             catch (Exception exception)
             {
@@ -92,6 +107,11 @@ namespace H.Services
             try
             {
                 OnClientDisconnected(args.Connection.Name);
+
+                if (DisconnectedCommandFactory != null)
+                {
+                    OnCommandReceived(DisconnectedCommandFactory(args));
+                }
             }
             catch (Exception exception)
             {

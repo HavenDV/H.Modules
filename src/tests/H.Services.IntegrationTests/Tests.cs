@@ -16,7 +16,11 @@ namespace H.Services.IntegrationTests
             using var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(30));
             var cancellationToken = cancellationTokenSource.Token;
 
-            await using var ipcService = new IpcClientService("H.DeskBand", "deskband");
+            await using var deskbandService = new IpcClientService("H.Deskband", "deskband")
+            {
+                ConnectedCommandFactory = _ => "print Connected to H.DeskBand.",
+                DisconnectedCommandFactory = _ => "print Disconnected from H.DeskBand.",
+            };
             await using var moduleService = new StaticModuleService(
                 TestModules.CreateDefaultRecorder(),
                 TestModules.CreateDefaultRecognizer(),
@@ -24,12 +28,12 @@ namespace H.Services.IntegrationTests
                 TestModules.CreateRunnerWithPrintCommand(),
                 TestModules.CreateTelegramRunner()
             );
-            await using var moduleFinder = new ModuleFinder(moduleService, ipcService);
+            await using var moduleFinder = new ModuleFinder(moduleService, deskbandService);
             await using var recognitionService = new RecognitionService(moduleFinder);
-            await using var runnerService = new RunnerService(moduleFinder, moduleService, recognitionService, ipcService);
-            
+            await using var runnerService = new RunnerService(moduleFinder, moduleService, recognitionService, deskbandService);
+
             var exceptions = new ExceptionsBag();
-            foreach (var service in new IServiceBase[] { moduleService, recognitionService, moduleFinder, runnerService, ipcService })
+            foreach (var service in new IServiceBase[] { moduleService, recognitionService, moduleFinder, runnerService, deskbandService })
             {
                 service.ExceptionOccurred += (_, exception) =>
                 {
@@ -40,7 +44,7 @@ namespace H.Services.IntegrationTests
                     cancellationTokenSource.Cancel();
                 };
             }
-            foreach (var service in new ICommandProducer[] { moduleService, recognitionService, ipcService })
+            foreach (var service in new ICommandProducer[] { moduleService, recognitionService, deskbandService })
             {
                 service.CommandReceived += (_, value) =>
                 {
