@@ -24,7 +24,7 @@ namespace H.Services.IntegrationTests
             await using var moduleService = new StaticModuleService(
                 TestModules.CreateDefaultRecorder(),
                 TestModules.CreateDefaultRecognizer(),
-                TestModules.CreateTimerNotifierWithDeskbandRandomTextEach1Seconds(),
+                TestModules.CreateTimerNotifierWithDeskbandDateTimeEach1Seconds(),
                 TestModules.CreateRunnerWithPrintCommand(),
                 TestModules.CreateTelegramRunner()
             );

@@ -41,7 +41,7 @@ namespace H.Services.IntegrationTests
             };
         }
 
-        public static INotifier CreateTimerNotifierWithDeskbandRandomTextEach1Seconds()
+        public static INotifier CreateTimerNotifierWithDeskbandDateTimeEach1Seconds()
         {
             return new TimerNotifier
             {
