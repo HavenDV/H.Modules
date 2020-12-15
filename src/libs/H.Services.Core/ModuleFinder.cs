@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using H.Core;
 using H.Core.Recognizers;
 using H.Core.Recorders;
 using H.Core.Runners;
@@ -43,6 +44,7 @@ namespace H.Services.Core
         #region Constructors
 
         /// <param name="moduleServices"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public ModuleFinder(params IModuleService[] moduleServices)
         {
             ModuleServices = moduleServices ?? throw new ArgumentNullException(nameof(moduleServices));
@@ -60,13 +62,15 @@ namespace H.Services.Core
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="arguments"></param>
+        /// <param name="command"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         /// <returns></returns>
-        public IEnumerable<ICall> GetCalls(string name, params string[] arguments)
+        public IEnumerable<ICall> GetCalls(ICommand command)
         {
+            command = command ?? throw new ArgumentNullException(nameof(command));
+            
             return Runners
-                .Select(runner => runner.TryPrepareCall(name, arguments))
+                .Select(runner => runner.TryPrepareCall(command))
                 .Where(call => call != null)
                 // ReSharper disable once RedundantEnumerableCastCall
                 .Cast<ICall>();

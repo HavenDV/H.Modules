@@ -35,9 +35,9 @@ namespace H.Services
         /// <summary>
         /// 
         /// </summary>
-        public event EventHandler<string>? CommandReceived;
+        public event EventHandler<ICommand>? CommandReceived;
 
-        private void OnCommandReceived(string value)
+        private void OnCommandReceived(ICommand value)
         {
             CommandReceived?.Invoke(this, value);
         }
@@ -76,24 +76,27 @@ namespace H.Services
 
                 foreach (var module in new [] { recorder, recognizer })
                 {
-                    module.NewCommand += (_, value) => OnCommandReceived(value);
+                    module.NewCommand += (_, value) => OnCommandReceived(Command.Parse(value));
                     module.ExceptionOccurred += (_, value) => OnExceptionOccurred(value);
                     
                     Modules.Add(module);
                 }
             }, cancellationToken);
         }
-        
+
         /// <summary>
         /// 
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="name"></param>
         /// <param name="cancellationToken"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         /// <returns></returns>
         public async Task<IModule> AddAsync<T>(string name, CancellationToken cancellationToken = default)
             where T : class, IModule
         {
+            name = name ?? throw new ArgumentNullException(nameof(name));
+            
 #pragma warning disable CA2000 // Dispose objects before losing scope
             var container = new ProcessContainer(name);
 #pragma warning restore CA2000 // Dispose objects before losing scope

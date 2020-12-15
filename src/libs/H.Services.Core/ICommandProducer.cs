@@ -1,4 +1,5 @@
 ﻿using System;
+using H.Core;
 
 namespace H.Services.Core
 {
@@ -10,6 +11,6 @@ namespace H.Services.Core
         /// <summary>
         /// 
         /// </summary>
-        event EventHandler<string>? CommandReceived;
+        event EventHandler<ICommand>? CommandReceived;
     }
 }

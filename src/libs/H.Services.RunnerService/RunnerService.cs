@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using H.Core;
 using H.Core.Runners;
-using H.Core.Utilities;
 using H.Services.Core;
 
 namespace H.Services
@@ -87,15 +86,14 @@ namespace H.Services
         /// </summary>
         /// <param name="command"></param>
         /// <param name="cancellationToken"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         /// <returns></returns>
-        public async Task RunAsync(string command, CancellationToken cancellationToken = default)
+        public async Task RunAsync(ICommand command, CancellationToken cancellationToken = default)
         {
-            var values = command.SplitOnlyFirstIgnoreQuote(' ');
-            var name = values.ElementAt(0);
-            var argument = values.ElementAtOrDefault(1) ?? string.Empty;
-
+            command = command ?? throw new ArgumentNullException(nameof(command));
+            
             var tasks = new List<Task>();
-            foreach (var call in ModuleFinder.GetCalls(name, argument))
+            foreach (var call in ModuleFinder.GetCalls(command))
             {
                 var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
                 CancellationTokenSources.TryAdd(call, source);
@@ -137,8 +135,11 @@ namespace H.Services
         /// 
         /// </summary>
         /// <param name="call"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public void CancelCall(ICall call)
         {
+            call = call ?? throw new ArgumentNullException(nameof(call));
+            
             if (!CancellationTokenSources.TryGetValue(call, out var source))
             {
                 return;
@@ -189,7 +190,7 @@ namespace H.Services
 
         #region Event Handlers
 
-        private async void OnCommandReceived(object _, string value)
+        private async void OnCommandReceived(object _, ICommand value)
         {
             try
             {

@@ -24,13 +24,13 @@ namespace H.Services
         /// <summary>
         /// 
         /// </summary>
-        public event EventHandler<string>? CommandReceived;
+        public event EventHandler<ICommand>? CommandReceived;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="value"></param>
-        protected void OnCommandReceived(string value)
+        protected void OnCommandReceived(ICommand value)
         {
             CommandReceived?.Invoke(this, value);
         }
@@ -43,6 +43,7 @@ namespace H.Services
         /// 
         /// </summary>
         /// <param name="modules"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public StaticModuleService(params IModule[] modules)
         {
             modules = modules ?? throw new ArgumentNullException(nameof(modules));
@@ -61,10 +62,12 @@ namespace H.Services
         /// 
         /// </summary>
         /// <param name="module"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public void Add(IModule module)
         {
             module = module ?? throw new ArgumentNullException(nameof(module));
-            module.NewCommand += (_, value) => OnCommandReceived(value);
+            
+            module.NewCommand += (_, value) => OnCommandReceived(Command.Parse(value));
             module.ExceptionOccurred += (_, value) => OnExceptionOccurred(value);
 
             Modules.Add(module);

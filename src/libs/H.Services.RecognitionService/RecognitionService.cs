@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using H.Core;
 using H.Core.Recognizers;
 using H.Core.Recorders;
 using H.Core.Utilities;
@@ -29,19 +30,19 @@ namespace H.Services
         /// <summary>
         /// 
         /// </summary>
-        public event EventHandler<string>? PreviewCommandReceived;
+        public event EventHandler<ICommand>? PreviewCommandReceived;
 
         /// <summary>
         /// 
         /// </summary>
-        public event EventHandler<string>? CommandReceived;
+        public event EventHandler<ICommand>? CommandReceived;
 
-        private void OnPreviewCommandReceived(string value)
+        private void OnPreviewCommandReceived(ICommand value)
         {
             PreviewCommandReceived?.Invoke(this, value);
         }
         
-        private void OnCommandReceived(string value)
+        private void OnCommandReceived(ICommand value)
         {
             CommandReceived?.Invoke(this, value);
         }
@@ -86,8 +87,8 @@ namespace H.Services
             CurrentRecognition = await Recognizer.StartStreamingRecognitionAsync(
                 Recorder, true, exceptions, cancellationToken)
                 .ConfigureAwait(false);
-            CurrentRecognition.PartialResultsReceived += (_, value) => OnPreviewCommandReceived(value);
-            CurrentRecognition.FinalResultsReceived += (_, value) => OnCommandReceived(value);
+            CurrentRecognition.PartialResultsReceived += (_, value) => OnPreviewCommandReceived(Command.Parse(value));
+            CurrentRecognition.FinalResultsReceived += (_, value) => OnCommandReceived(Command.Parse(value));
         }
         
         /// <summary>
