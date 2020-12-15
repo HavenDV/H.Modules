@@ -15,9 +15,9 @@ namespace H.Modules.UnitTests.Extensions
         
         public static void EnableLog(this IModule module)
         {
-            module.NewCommand += (_, command) =>
+            module.CommandReceived += (_, command) =>
             {
-                LogAction($"{nameof(module.NewCommand)}: {command}");
+                LogAction($"{nameof(module.CommandReceived)}: {command}");
             };
             module.ExceptionOccurred += (_, exception) =>
             {
@@ -30,10 +30,6 @@ namespace H.Modules.UnitTests.Extensions
             module.NewCommandAsync += (_, args) =>
             {
                 LogAction($"{nameof(module.NewCommandAsync)}: {args.Text}");
-            };
-            module.SettingsSaved += (_, _) =>
-            {
-                LogAction($"{nameof(module.SettingsSaved)}");
             };
         }
 

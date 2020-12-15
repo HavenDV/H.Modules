@@ -67,7 +67,7 @@ namespace H.Services
         {
             module = module ?? throw new ArgumentNullException(nameof(module));
             
-            module.NewCommand += (_, value) => OnCommandReceived(Command.Parse(value));
+            module.CommandReceived += (_, value) => OnCommandReceived(value);
             module.ExceptionOccurred += (_, value) => OnExceptionOccurred(value);
 
             Modules.Add(module);

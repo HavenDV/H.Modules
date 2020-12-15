@@ -76,7 +76,7 @@ namespace H.Services
 
                 foreach (var module in new [] { recorder, recognizer })
                 {
-                    module.NewCommand += (_, value) => OnCommandReceived(Command.Parse(value));
+                    module.CommandReceived += (_, value) => OnCommandReceived(value);
                     module.ExceptionOccurred += (_, value) => OnExceptionOccurred(value);
                     
                     Modules.Add(module);

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using H.Core;
 using H.Core.Notifiers;
 using H.Core.Recognizers;
 using H.Core.Recorders;
@@ -38,7 +39,7 @@ namespace H.Services.IntegrationTests
         {
             return new TimerNotifier
             {
-                Command = "print Hello, World!",
+                Command = new Command("print", "Hello, World!"),
                 Interval = TimeSpan.FromSeconds(3),
             };
         }
@@ -47,7 +48,7 @@ namespace H.Services.IntegrationTests
         {
             return new TimerNotifier
             {
-                CommandFactory = () => $"deskband {DateTime.Now:T}",
+                CommandFactory = () => new Command("deskband", $"{DateTime.Now:T}"),
                 Interval = TimeSpan.FromSeconds(1),
             };
         }
@@ -56,7 +57,7 @@ namespace H.Services.IntegrationTests
         {
             return new TimerNotifier
             {
-                Command = "sleep 5000",
+                Command = new Command("sleep", "5000"),
                 Interval = TimeSpan.FromSeconds(1),
             };
         }
@@ -65,7 +66,7 @@ namespace H.Services.IntegrationTests
         {
             return new TimerNotifier
             {
-                Command = "sync-sleep 5000",
+                Command = new Command("sync-sleep", "5000"),
                 Interval = TimeSpan.FromSeconds(3),
             };
         }
