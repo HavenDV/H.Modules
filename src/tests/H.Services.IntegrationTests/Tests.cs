@@ -28,6 +28,7 @@ namespace H.Services.IntegrationTests
                 TestModules.CreateTimerNotifierWithSleep5000Each1Seconds(),
                 TestModules.CreateRunnerWithPrintCommand(),
                 TestModules.CreateRunnerWithSleepCommand(),
+                TestModules.CreateRunnerWithSyncSleepCommand(),
                 TestModules.CreateTelegramRunner()
             );
             await using var moduleFinder = new ModuleFinder(moduleService, deskbandService);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using H.Core.Notifiers;
 using H.Core.Recognizers;
@@ -60,11 +61,31 @@ namespace H.Services.IntegrationTests
             };
         }
 
+        public static INotifier CreateTimerNotifierWithSyncSleep5000Each3Seconds()
+        {
+            return new TimerNotifier
+            {
+                Command = "sync-sleep 5000",
+                Interval = TimeSpan.FromSeconds(3),
+            };
+        }
+
         public static IRunner CreateRunnerWithPrintCommand()
         {
             return new Runner
             {
                 SyncAction.WithSingleArgument("print", Console.WriteLine, "value"),
+            };
+        }
+
+        public static IRunner CreateRunnerWithSyncSleepCommand()
+        {
+            return new Runner
+            {
+                SyncAction.WithSingleArgument(
+                    "sync-sleep",
+                    argument => Thread.Sleep(Convert.ToInt32(argument)),
+                    "millisecondsDelay"),
             };
         }
 
