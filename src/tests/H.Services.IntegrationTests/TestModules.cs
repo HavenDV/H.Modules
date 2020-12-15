@@ -41,6 +41,15 @@ namespace H.Services.IntegrationTests
             };
         }
 
+        public static INotifier CreateTimerNotifierWithDeskbandRandomTextEach1Seconds()
+        {
+            return new TimerNotifier
+            {
+                CommandFactory = () => $"deskband {DateTime.Now:T}",
+                IntervalInMilliseconds = 2000,
+            };
+        }
+
         public static IRunner CreateRunnerWithPrintCommand()
         {
             return new Runner
