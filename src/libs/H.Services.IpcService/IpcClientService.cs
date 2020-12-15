@@ -2,16 +2,16 @@
 using System.Threading;
 using System.Threading.Tasks;
 using H.Core;
-using H.Core.Runners;
 using H.Pipes;
 using H.Pipes.Args;
+using H.Services.Core;
 
 namespace H.Services
 {
     /// <summary>
     /// 
     /// </summary>
-    public sealed class IpcClientService : StaticModuleService
+    public sealed class IpcClientService : ServiceBase, ICommandProducer
     {
         #region Properties
 
@@ -37,6 +37,11 @@ namespace H.Services
         #region Events
 
         /// <summary>
+        /// 
+        /// </summary>
+        public event EventHandler<ICommand>? CommandReceived;
+
+        /// <summary>
         /// Invoked whenever a client connects to the server.
         /// </summary>
         public event EventHandler<string>? Connected;
@@ -46,6 +51,11 @@ namespace H.Services
         /// </summary>
         public event EventHandler<string>? Disconnected;
 
+        private void OnCommandReceived(ICommand value)
+        {
+            CommandReceived?.Invoke(this, value);
+        }
+        
         private void OnConnected(string value)
         {
             Connected?.Invoke(this, value);
@@ -63,10 +73,9 @@ namespace H.Services
         /// <summary>
         /// 
         /// </summary>
-        public IpcClientService(string pipeName, string commandName)
+        public IpcClientService(string pipeName)
         {
             pipeName = pipeName ?? throw new ArgumentNullException(nameof(pipeName));
-            commandName = commandName ?? throw new ArgumentNullException(nameof(commandName));
 
             PipeClient = new PipeClient<string>(pipeName);
             PipeClient.MessageReceived += PipeServer_OnMessageReceived;
@@ -75,13 +84,6 @@ namespace H.Services
             PipeClient.Disconnected += PipeServer_OnDisconnected;
             
             AsyncDisposables.Add(PipeClient);
-
-#pragma warning disable CA2000 // Dispose objects before losing scope
-            Add(new Runner
-            {
-                new AsyncAction(commandName, WriteAsync, "value")
-            });
-#pragma warning restore CA2000 // Dispose objects before losing scope
         }
 
         #endregion

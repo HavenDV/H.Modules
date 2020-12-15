@@ -17,7 +17,7 @@ namespace H.Services.IntegrationTests
             using var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(30));
             var cancellationToken = cancellationTokenSource.Token;
 
-            await using var deskbandService = new IpcClientService("H.Deskband", "deskband")
+            await using var deskbandService = new IpcClientService("H.Deskband")
             {
                 ConnectedCommandFactory = _ => new Command("print", "Connected to H.DeskBand."),
                 DisconnectedCommandFactory = _ => new Command("print", "Disconnected from H.DeskBand."),
@@ -31,7 +31,7 @@ namespace H.Services.IntegrationTests
                 TestModules.CreateRunnerWithSyncSleepCommand(),
                 TestModules.CreateTelegramRunner()
             );
-            await using var moduleFinder = new ModuleFinder(moduleService, deskbandService);
+            await using var moduleFinder = new ModuleFinder(moduleService);
             await using var recognitionService = new RecognitionService(moduleFinder);
             await using var runnerService = new RunnerService(moduleFinder, moduleService, recognitionService, deskbandService);
             runnerService.CallRunning += (_, call) =>
@@ -65,6 +65,10 @@ namespace H.Services.IntegrationTests
                     Console.WriteLine($"{nameof(service.CommandReceived)}: {value}");
                 };
             }
+            
+            // Service runners.
+            moduleService.Add(new IpcClientServiceRunner("deskband", deskbandService));
+            moduleService.Add(new IpcClientServiceRunner("deskband", deskbandService));
 
             await recognitionService.Start5SecondsStart5SecondsStopTestAsync(cancellationToken);
 
