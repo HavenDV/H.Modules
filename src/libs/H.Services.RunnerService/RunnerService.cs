@@ -72,6 +72,7 @@ namespace H.Services
             foreach (var producer in commandProducers)
             {
                 producer.CommandReceived += OnCommandReceived;
+                producer.AsyncCommandReceived += OnAsyncCommandReceived;
 
                 Dependencies.Add(producer);
             }
@@ -195,6 +196,21 @@ namespace H.Services
             try
             {
                 await RunAsync(value).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+            catch (Exception exception)
+            {
+                OnExceptionOccurred(exception);
+            }
+        }
+
+        private async Task OnAsyncCommandReceived(object _, ICommand value, CancellationToken cancellationToken)
+        {
+            try
+            {
+                await RunAsync(value, cancellationToken).ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {

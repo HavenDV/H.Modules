@@ -37,6 +37,11 @@ namespace H.Services
         /// </summary>
         public event EventHandler<ICommand>? CommandReceived;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public event AsyncEventHandler<ICommand>? AsyncCommandReceived;
+
         private void OnPreviewCommandReceived(ICommand value)
         {
             PreviewCommandReceived?.Invoke(this, value);

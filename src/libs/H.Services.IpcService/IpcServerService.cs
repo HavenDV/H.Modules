@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using H.Core;
-using H.Core.Runners;
 using H.Pipes;
 using H.Pipes.AccessControl;
 using H.Pipes.Args;
@@ -13,7 +12,7 @@ namespace H.Services
     /// <summary>
     /// 
     /// </summary>
-    public sealed class IpcServerService : StaticModuleService
+    public sealed class IpcServerService : ServiceBase, ICommandProducer
     {
         #region Properties
 
@@ -34,6 +33,16 @@ namespace H.Services
         #region Events
 
         /// <summary>
+        /// 
+        /// </summary>
+        public event EventHandler<ICommand>? CommandReceived;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public event AsyncEventHandler<ICommand>? AsyncCommandReceived;
+        
+        /// <summary>
         /// Invoked whenever a client connects to the server.
         /// </summary>
         public event EventHandler<string>? ClientConnected;
@@ -42,6 +51,11 @@ namespace H.Services
         /// Invoked whenever a client disconnects from the server.
         /// </summary>
         public event EventHandler<string>? ClientDisconnected;
+
+        private void OnCommandReceived(ICommand value)
+        {
+            CommandReceived?.Invoke(this, value);
+        }
 
         private void OnClientConnected(string value)
         {
@@ -60,10 +74,9 @@ namespace H.Services
         /// <summary>
         /// 
         /// </summary>
-        public IpcServerService(string pipeName, string commandName)
+        public IpcServerService(string pipeName)
         {
             pipeName = pipeName ?? throw new ArgumentNullException(nameof(pipeName));
-            commandName = commandName ?? throw new ArgumentNullException(nameof(commandName));
 
             PipeServer = new PipeServer<string>(pipeName);
             PipeServer.MessageReceived += PipeServer_OnMessageReceived;
@@ -73,13 +86,6 @@ namespace H.Services
             PipeServer.AllowUsersReadWrite();
             
             AsyncDisposables.Add(PipeServer);
-
-#pragma warning disable CA2000 // Dispose objects before losing scope
-            Add(new Runner
-            {
-                new AsyncAction(commandName, WriteAsync, "value")
-            });
-#pragma warning restore CA2000 // Dispose objects before losing scope
         }
 
         #endregion

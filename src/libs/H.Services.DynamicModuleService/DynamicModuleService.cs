@@ -37,13 +37,23 @@ namespace H.Services
         /// </summary>
         public event EventHandler<ICommand>? CommandReceived;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public event AsyncEventHandler<ICommand>? AsyncCommandReceived;
+
         private void OnCommandReceived(ICommand value)
         {
             CommandReceived?.Invoke(this, value);
         }
 
+        private async Task OnAsyncCommandReceivedAsync(ICommand value, CancellationToken cancellationToken = default)
+        {
+            await AsyncCommandReceived.InvokeAsync(this, value, cancellationToken).ConfigureAwait(false);
+        }
+
         #endregion
-        
+
         #region Constructors
 
         /// <summary>
@@ -76,9 +86,11 @@ namespace H.Services
 
                 foreach (var module in new [] { recorder, recognizer })
                 {
-                    module.CommandReceived += (_, value) => OnCommandReceived(value);
                     module.ExceptionOccurred += (_, value) => OnExceptionOccurred(value);
-                    
+                    module.CommandReceived += (_, value) => OnCommandReceived(value);
+                    module.AsyncCommandReceived +=
+                        (_, value, token) => OnAsyncCommandReceivedAsync(value, token);
+
                     Modules.Add(module);
                 }
             }, cancellationToken);

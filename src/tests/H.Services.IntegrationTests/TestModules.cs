@@ -53,12 +53,12 @@ namespace H.Services.IntegrationTests
             };
         }
 
-        public static INotifier CreateTimerNotifierWithSleep5000Each1Seconds()
+        public static INotifier CreateTimerNotifierWithSleep5000Each5Seconds()
         {
             return new TimerNotifier
             {
                 Command = new Command("sleep", "5000"),
-                Interval = TimeSpan.FromSeconds(1),
+                Interval = TimeSpan.FromSeconds(5),
             };
         }
 
@@ -77,6 +77,28 @@ namespace H.Services.IntegrationTests
             {
                 SyncAction.WithSingleArgument("print", Console.WriteLine, "value"),
             };
+        }
+
+        public static IRunner CreateRunnerWithRunAsyncCommand()
+        {
+            var runner = new Runner();
+            runner.Add(SyncAction.WithCommand(
+                "run",
+                command => runner.Run(
+                    new Command(
+                        command.Arguments.ElementAt(0),
+                        command.Arguments.Skip(1).ToArray())),
+                "command"));
+            runner.Add(AsyncAction.WithCommand(
+                "run-async", 
+                (command, token) => runner.RunAsync(
+                    new Command(
+                        command.Arguments.ElementAt(0), 
+                        command.Arguments.Skip(1).ToArray()), 
+                    token), 
+                "command"));
+            
+            return runner;
         }
 
         public static IRunner CreateRunnerWithSyncSleepCommand()

@@ -25,10 +25,10 @@ namespace H.Services.IntegrationTests
             await using var moduleService = new StaticModuleService(
                 TestModules.CreateDefaultRecorder(),
                 TestModules.CreateDefaultRecognizer(),
-                TestModules.CreateTimerNotifierWithSleep5000Each1Seconds(),
                 TestModules.CreateRunnerWithPrintCommand(),
                 TestModules.CreateRunnerWithSleepCommand(),
                 TestModules.CreateRunnerWithSyncSleepCommand(),
+                TestModules.CreateRunnerWithRunAsyncCommand(),
                 TestModules.CreateTelegramRunner()
             );
             await using var moduleFinder = new ModuleFinder(moduleService);
@@ -64,13 +64,21 @@ namespace H.Services.IntegrationTests
                 {
                     Console.WriteLine($"{nameof(service.CommandReceived)}: {value}");
                 };
+                service.AsyncCommandReceived += (_, value, _) =>
+                {
+                    Console.WriteLine($"{nameof(service.AsyncCommandReceived)}: {value}");
+                    
+                    return Task.CompletedTask;
+                };
             }
-            
+
             moduleService.Add(new IpcClientServiceRunner("deskband", deskbandService));
             moduleService.Add(new RecognitionServiceRunner(recognitionService));
 
             await runnerService.StartRecord5SecondsStopRecordTestAsync(cancellationToken);
 
+            await runnerService.RunAsync(new Command("run", "sleep", "5000"), cancellationToken);
+            
             runnerService.CancelAll();
 
             await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);

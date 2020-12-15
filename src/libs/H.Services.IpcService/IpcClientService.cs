@@ -42,6 +42,11 @@ namespace H.Services
         public event EventHandler<ICommand>? CommandReceived;
 
         /// <summary>
+        /// 
+        /// </summary>
+        public event AsyncEventHandler<ICommand>? AsyncCommandReceived;
+
+        /// <summary>
         /// Invoked whenever a client connects to the server.
         /// </summary>
         public event EventHandler<string>? Connected;
@@ -55,7 +60,7 @@ namespace H.Services
         {
             CommandReceived?.Invoke(this, value);
         }
-        
+
         private void OnConnected(string value)
         {
             Connected?.Invoke(this, value);
