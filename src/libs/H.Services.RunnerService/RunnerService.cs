@@ -166,7 +166,14 @@ namespace H.Services
         {
             CancelAll();
 
-            await Task.WhenAll(Tasks.Values).ConfigureAwait(false);
+            try
+            {
+                await Task.WhenAll(Tasks.Values).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+            
             Tasks.Clear();
 
             foreach (var source in CancellationTokenSources.Values)
