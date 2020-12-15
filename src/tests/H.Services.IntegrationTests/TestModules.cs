@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using H.Core.Notifiers;
 using H.Core.Recognizers;
 using H.Core.Recorders;
@@ -37,7 +38,7 @@ namespace H.Services.IntegrationTests
             return new TimerNotifier
             {
                 Command = "print Hello, World!",
-                IntervalInMilliseconds = 3000,
+                Interval = TimeSpan.FromSeconds(3),
             };
         }
 
@@ -46,7 +47,16 @@ namespace H.Services.IntegrationTests
             return new TimerNotifier
             {
                 CommandFactory = () => $"deskband {DateTime.Now:T}",
-                IntervalInMilliseconds = 2000,
+                Interval = TimeSpan.FromSeconds(1),
+            };
+        }
+
+        public static INotifier CreateTimerNotifierWithSleep5000Each1Seconds()
+        {
+            return new TimerNotifier
+            {
+                Command = "sleep 5000",
+                Interval = TimeSpan.FromSeconds(1),
             };
         }
 
@@ -55,6 +65,17 @@ namespace H.Services.IntegrationTests
             return new Runner
             {
                 Command.WithSingleArgument("print", Console.WriteLine),
+            };
+        }
+
+        public static IRunner CreateRunnerWithSleepCommand()
+        {
+            return new Runner
+            {
+                AsyncCommand.WithSingleArgument(
+                    "sleep", 
+                    (argument, cancellationToken) => Task.Delay(Convert.ToInt32(argument), cancellationToken),
+                    "millisecondsDelay"),
             };
         }
 

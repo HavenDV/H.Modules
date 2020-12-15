@@ -25,13 +25,26 @@ namespace H.Services.IntegrationTests
                 TestModules.CreateDefaultRecorder(),
                 TestModules.CreateDefaultRecognizer(),
                 TestModules.CreateTimerNotifierWithDeskbandDateTimeEach1Seconds(),
+                TestModules.CreateTimerNotifierWithSleep5000Each1Seconds(),
                 TestModules.CreateRunnerWithPrintCommand(),
+                TestModules.CreateRunnerWithSleepCommand(),
                 TestModules.CreateTelegramRunner()
             );
             await using var moduleFinder = new ModuleFinder(moduleService, deskbandService);
             await using var recognitionService = new RecognitionService(moduleFinder);
             await using var runnerService = new RunnerService(moduleFinder, moduleService, recognitionService, deskbandService);
-
+            runnerService.CallRunning += (_, call) =>
+            {
+                Console.WriteLine($"{nameof(runnerService.CallRunning)}: {call.Command.Name} {string.Join(" ", call.Arguments)}");
+            };
+            runnerService.CallRan += (_, call) =>
+            {
+                Console.WriteLine($"{nameof(runnerService.CallRan)}: {call.Command.Name} {string.Join(" ", call.Arguments)}");
+            };
+            runnerService.CallCancelled += (_, call) =>
+            {
+                Console.WriteLine($"{nameof(runnerService.CallCancelled)}: {call.Command.Name} {string.Join(" ", call.Arguments)}");
+            };
             var exceptions = new ExceptionsBag();
             foreach (var service in new IServiceBase[] { moduleService, recognitionService, moduleFinder, runnerService, deskbandService })
             {
@@ -54,6 +67,10 @@ namespace H.Services.IntegrationTests
 
             await recognitionService.Start5SecondsStart5SecondsStopTestAsync(cancellationToken);
 
+            runnerService.CancelAll();
+
+            await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
+            
             exceptions.EnsureNoExceptions();
         }
     }
