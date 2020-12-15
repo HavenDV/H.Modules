@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using H.Core.Runners;
 using H.Pipes;
 using H.Pipes.Args;
-using H.Services.Core;
 
 namespace H.Services
 {
@@ -16,7 +15,12 @@ namespace H.Services
         #region Properties
 
         private PipeClient<string> PipeClient { get; }
-        
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(1);
+
         /// <summary>
         /// 
         /// </summary>
@@ -134,20 +138,7 @@ namespace H.Services
         #region Public methods
 
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        public override Task InitializeAsync(CancellationToken cancellationToken = default)
-        {
-            return InitializeAsync(async () =>
-            {
-                await PipeClient.ConnectAsync(cancellationToken).ConfigureAwait(false);
-            }, cancellationToken);
-        }
-
-        /// <summary>
-        /// 
+        /// Writes command to server with timeout from property <see cref="Timeout"/>.
         /// </summary>
         /// <param name="command"></param>
         /// <param name="cancellationToken"></param>
@@ -156,12 +147,10 @@ namespace H.Services
         {
             command = command ?? throw new ArgumentNullException(nameof(command));
 
-            if (InitializeState is not State.Completed)
-            {
-                await InitializeAsync(cancellationToken).ConfigureAwait(false);
-            }
-            
-            await PipeClient.WriteAsync(command, cancellationToken).ConfigureAwait(false);
+            using var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            source.CancelAfter(Timeout);
+
+            await PipeClient.WriteAsync(command, source.Token).ConfigureAwait(false);
         }
 
         #endregion
