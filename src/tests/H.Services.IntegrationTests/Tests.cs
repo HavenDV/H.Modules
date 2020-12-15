@@ -16,6 +16,7 @@ namespace H.Services.IntegrationTests
             using var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(30));
             var cancellationToken = cancellationTokenSource.Token;
 
+            await using var ipcService = new IpcClientService("H.DeskBand", "deskband");
             await using var moduleService = new StaticModuleService(
                 TestModules.CreateDefaultRecorder(),
                 TestModules.CreateDefaultRecognizer(),
@@ -23,12 +24,12 @@ namespace H.Services.IntegrationTests
                 TestModules.CreateRunnerWithPrintCommand(),
                 TestModules.CreateTelegramRunner()
             );
-            await using var moduleFinder = new ModuleFinder(moduleService);
+            await using var moduleFinder = new ModuleFinder(moduleService, ipcService);
             await using var recognitionService = new RecognitionService(moduleFinder);
-            await using var runnerService = new RunnerService(moduleFinder, moduleService, recognitionService);
+            await using var runnerService = new RunnerService(moduleFinder, moduleService, recognitionService, ipcService);
             
             var exceptions = new ExceptionsBag();
-            foreach (var service in new IServiceBase[] { moduleService, recognitionService, moduleFinder, runnerService })
+            foreach (var service in new IServiceBase[] { moduleService, recognitionService, moduleFinder, runnerService, ipcService })
             {
                 service.ExceptionOccurred += (_, exception) =>
                 {
@@ -39,7 +40,7 @@ namespace H.Services.IntegrationTests
                     cancellationTokenSource.Cancel();
                 };
             }
-            foreach (var service in new ICommandProducer[] { moduleService, recognitionService })
+            foreach (var service in new ICommandProducer[] { moduleService, recognitionService, ipcService })
             {
                 service.CommandReceived += (_, value) =>
                 {

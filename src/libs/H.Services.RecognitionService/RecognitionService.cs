@@ -71,7 +71,7 @@ namespace H.Services
         {
             if (InitializeState is not State.Completed)
             {
-                await InitializeAsync(null, cancellationToken).ConfigureAwait(false);
+                await InitializeAsync(cancellationToken).ConfigureAwait(false);
             }
             
             if (CurrentRecognition != null)

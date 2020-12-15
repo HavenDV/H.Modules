@@ -26,7 +26,11 @@ namespace H.Services
         /// </summary>
         public event EventHandler<string>? CommandReceived;
 
-        private void OnCommandReceived(string value)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        protected void OnCommandReceived(string value)
         {
             CommandReceived?.Invoke(this, value);
         }
