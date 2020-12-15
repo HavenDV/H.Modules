@@ -66,11 +66,10 @@ namespace H.Services.IntegrationTests
                 };
             }
             
-            // Service runners.
             moduleService.Add(new IpcClientServiceRunner("deskband", deskbandService));
-            moduleService.Add(new IpcClientServiceRunner("deskband", deskbandService));
+            moduleService.Add(new RecognitionServiceRunner(recognitionService));
 
-            await recognitionService.Start5SecondsStart5SecondsStopTestAsync(cancellationToken);
+            await runnerService.StartRecord5SecondsStopRecordTestAsync(cancellationToken);
 
             runnerService.CancelAll();
 
