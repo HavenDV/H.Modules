@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using H.Core;
 
 namespace H.Modules.UnitTests.Extensions
@@ -27,9 +28,11 @@ namespace H.Modules.UnitTests.Extensions
             {
                 LogAction($"{nameof(module.LogReceived)}: {log}");
             };
-            module.NewCommandAsync += (_, args) =>
+            module.AsyncCommandReceived += (_, command, _) =>
             {
-                LogAction($"{nameof(module.NewCommandAsync)}: {args.Text}");
+                LogAction($"{nameof(module.AsyncCommandReceived)}: {command}");
+                
+                return Task.CompletedTask;
             };
         }
 
