@@ -78,7 +78,7 @@ namespace H.Services
 #pragma warning disable CA2000 // Dispose objects before losing scope
             Add(new Runner
             {
-                new AsyncCommand(commandName, WriteAsync)
+                new AsyncAction(commandName, WriteAsync, "value")
             });
 #pragma warning restore CA2000 // Dispose objects before losing scope
         }
@@ -140,17 +140,17 @@ namespace H.Services
         /// <summary>
         /// Writes command to server with timeout from property <see cref="Timeout"/>.
         /// </summary>
-        /// <param name="command"></param>
+        /// <param name="value"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task WriteAsync(string command, CancellationToken cancellationToken = default)
+        public async Task WriteAsync(string value, CancellationToken cancellationToken = default)
         {
-            command = command ?? throw new ArgumentNullException(nameof(command));
+            value = value ?? throw new ArgumentNullException(nameof(value));
 
             using var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             source.CancelAfter(Timeout);
 
-            await PipeClient.WriteAsync(command, source.Token).ConfigureAwait(false);
+            await PipeClient.WriteAsync(value, source.Token).ConfigureAwait(false);
         }
 
         #endregion

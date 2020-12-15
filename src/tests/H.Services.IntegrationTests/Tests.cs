@@ -24,7 +24,6 @@ namespace H.Services.IntegrationTests
             await using var moduleService = new StaticModuleService(
                 TestModules.CreateDefaultRecorder(),
                 TestModules.CreateDefaultRecognizer(),
-                TestModules.CreateTimerNotifierWithDeskbandDateTimeEach1Seconds(),
                 TestModules.CreateTimerNotifierWithSleep5000Each1Seconds(),
                 TestModules.CreateRunnerWithPrintCommand(),
                 TestModules.CreateRunnerWithSleepCommand(),
@@ -35,15 +34,15 @@ namespace H.Services.IntegrationTests
             await using var runnerService = new RunnerService(moduleFinder, moduleService, recognitionService, deskbandService);
             runnerService.CallRunning += (_, call) =>
             {
-                Console.WriteLine($"{nameof(runnerService.CallRunning)}: {call.Command.Name} {string.Join(" ", call.Arguments)}");
+                Console.WriteLine($"{nameof(runnerService.CallRunning)}: {call.Action.Name} {string.Join(" ", call.Arguments)}");
             };
             runnerService.CallRan += (_, call) =>
             {
-                Console.WriteLine($"{nameof(runnerService.CallRan)}: {call.Command.Name} {string.Join(" ", call.Arguments)}");
+                Console.WriteLine($"{nameof(runnerService.CallRan)}: {call.Action.Name} {string.Join(" ", call.Arguments)}");
             };
             runnerService.CallCancelled += (_, call) =>
             {
-                Console.WriteLine($"{nameof(runnerService.CallCancelled)}: {call.Command.Name} {string.Join(" ", call.Arguments)}");
+                Console.WriteLine($"{nameof(runnerService.CallCancelled)}: {call.Action.Name} {string.Join(" ", call.Arguments)}");
             };
             var exceptions = new ExceptionsBag();
             foreach (var service in new IServiceBase[] { moduleService, recognitionService, moduleFinder, runnerService, deskbandService })

@@ -64,7 +64,7 @@ namespace H.Services.IntegrationTests
         {
             return new Runner
             {
-                Command.WithSingleArgument("print", Console.WriteLine),
+                SyncAction.WithSingleArgument("print", Console.WriteLine, "value"),
             };
         }
 
@@ -72,7 +72,7 @@ namespace H.Services.IntegrationTests
         {
             return new Runner
             {
-                AsyncCommand.WithSingleArgument(
+                AsyncAction.WithSingleArgument(
                     "sleep", 
                     (argument, cancellationToken) => Task.Delay(Convert.ToInt32(argument), cancellationToken),
                     "millisecondsDelay"),

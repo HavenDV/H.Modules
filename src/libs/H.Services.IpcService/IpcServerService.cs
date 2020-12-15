@@ -76,7 +76,7 @@ namespace H.Services
 #pragma warning disable CA2000 // Dispose objects before losing scope
             Add(new Runner
             {
-                new AsyncCommand(commandName, WriteAsync)
+                new AsyncAction(commandName, WriteAsync, "value")
             });
 #pragma warning restore CA2000 // Dispose objects before losing scope
         }
@@ -151,19 +151,19 @@ namespace H.Services
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="command"></param>
+        /// <param name="value"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task WriteAsync(string command, CancellationToken cancellationToken = default)
+        public async Task WriteAsync(string value, CancellationToken cancellationToken = default)
         {
-            command = command ?? throw new ArgumentNullException(nameof(command));
+            value = value ?? throw new ArgumentNullException(nameof(value));
 
             if (InitializeState is not State.Completed)
             {
                 await InitializeAsync(cancellationToken).ConfigureAwait(false);
             }
             
-            await PipeServer.WriteAsync(command, cancellationToken).ConfigureAwait(false);
+            await PipeServer.WriteAsync(value, cancellationToken).ConfigureAwait(false);
         }
 
         #endregion
