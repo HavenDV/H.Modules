@@ -66,22 +66,42 @@ namespace H.Services.Core
         /// <param name="func"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        protected async Task InitializeAsync(Func<Task>? func, CancellationToken cancellationToken = default) =>
-            await RunAsync(
-                state => InitializeState = state,
-                InitializeState,
-                async () =>
+        protected async Task InitializeAsync(Func<Task>? func, CancellationToken cancellationToken = default)
+        {
+            switch (InitializeState)
+            {
+                case State.Completed:
+                    return;
+                
+                case State.InProgress:
                 {
-                    await Task
-                        .WhenAll(Dependencies
-                            .Select(dependency => dependency.InitializeAsync(cancellationToken)))
-                        .ConfigureAwait(false);
-
-                    if (func != null)
+                    while (InitializeState == State.InProgress)
                     {
-                        await func().ConfigureAwait(false);
+                        await Task.Delay(TimeSpan.FromMilliseconds(1), cancellationToken).ConfigureAwait(false);
                     }
-                }).ConfigureAwait(false);
+                    if (InitializeState == State.Completed)
+                    {
+                        return;
+                    }
+
+                    break;
+                }
+            }
+
+            InitializeState = State.InProgress;
+
+            await Task
+                .WhenAll(Dependencies
+                    .Select(dependency => dependency.InitializeAsync(cancellationToken)))
+                .ConfigureAwait(false);
+
+            if (func != null)
+            {
+                await func().ConfigureAwait(false);
+            }
+            
+            InitializeState = State.Completed;
+        }
 
         /// <summary>
         /// 
@@ -97,41 +117,48 @@ namespace H.Services.Core
         /// 
         /// </summary>
         /// <returns></returns>
-        public virtual async ValueTask DisposeAsync() => await RunAsync(
-            state => DisposeState = state, 
-            DisposeState, 
-            async () =>
-            {
-                await Task
-                    .WhenAll(Dependencies
-                        .Select(dependency => dependency.DisposeAsync().AsTask()))
-                    .ConfigureAwait(false);
-                
-                foreach (var disposable in Disposables)
-                {
-                    disposable.Dispose();
-                }
-
-                foreach (var disposable in AsyncDisposables)
-                {
-                    await disposable.DisposeAsync().ConfigureAwait(false);
-                }
-
-                GC.SuppressFinalize(this);
-            }).ConfigureAwait(false);
-
-        private static async Task RunAsync(Action<State> setState, State currentState, Func<Task> func)
+        public virtual async ValueTask DisposeAsync()
         {
-            if (currentState is not State.NotStarted)
+            switch (DisposeState)
             {
-                return;
+                case State.Completed:
+                    return;
+                
+                case State.InProgress:
+                {
+                    while (DisposeState == State.InProgress)
+                    {
+                        await Task.Delay(TimeSpan.FromMilliseconds(1)).ConfigureAwait(false);
+                    }
+                    if (DisposeState == State.Completed)
+                    {
+                        return;
+                    }
+
+                    break;
+                }
             }
 
-            setState(State.InProgress);
+            DisposeState = State.InProgress;
 
-            await func().ConfigureAwait(false);
+            await Task
+                .WhenAll(Dependencies
+                    .Select(dependency => dependency.DisposeAsync().AsTask()))
+                .ConfigureAwait(false);
 
-            setState(State.Completed);
+            foreach (var disposable in Disposables)
+            {
+                disposable.Dispose();
+            }
+
+            foreach (var disposable in AsyncDisposables)
+            {
+                await disposable.DisposeAsync().ConfigureAwait(false);
+            }
+
+            GC.SuppressFinalize(this);
+
+            DisposeState = State.Completed;
         }
         
         #endregion
