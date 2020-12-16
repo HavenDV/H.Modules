@@ -48,7 +48,7 @@ namespace H.Services.IntegrationTests
         {
             return new TimerNotifier
             {
-                CommandFactory = () => new Command("deskband", $"{DateTime.Now:T}"),
+                CommandFactory = () => new Command("deskband", "preview", $"{DateTime.Now:T}"),
                 Interval = TimeSpan.FromSeconds(1),
             };
         }
