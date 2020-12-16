@@ -82,6 +82,8 @@ namespace H.Services.IntegrationTests
             runnerService.CancelAll();
 
             await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
+
+            await runnerService.RunAsync(new Command("deskband", "clear-preview", ""), cancellationToken);
             
             exceptions.EnsureNoExceptions();
         }
